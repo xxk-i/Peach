@@ -3,13 +3,13 @@
 
 use std::fs::read_dir;
 
-static DIRECTORY: &str = CHANGE_ME;
+//static DIRECTORY: &str = "K:/ROMS/Switch/Modding/theatrythm/romfs/StreamingAssets/aa/Switch";
 
 #[tauri::command]
 // should exported rust function use ts or rust naming convention lol?
-fn listdir() -> Vec<String> {
+fn listdir(dir: String) -> Vec<String> {
     // iterate the DirEntry's, get file name as string, collect back up
-    read_dir(DIRECTORY).unwrap().map(|x| 
+    read_dir(dir).unwrap().map(|x| 
         x.unwrap().file_name().to_str().unwrap().to_string()).collect()
 }
 
