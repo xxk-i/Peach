@@ -1,7 +1,7 @@
 <script lang="ts">
   import ListDir from './lib/ListDir.svelte'
 
-  let path = "";
+  let path = "/Users/grojdg/Developer";
 </script>
 
 <main class="container">
