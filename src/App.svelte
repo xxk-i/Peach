@@ -5,10 +5,8 @@
 </script>
 
 <main class="container">
-  <h1>Welcome to Tauri!</h1>
+  <h1>Peach</h1>
   <input bind:value={path}>
-
-  <h1>Hello!</h1>
 
   <div class="row">
     <ListDir path={path}/>

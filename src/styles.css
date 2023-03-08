@@ -4,8 +4,8 @@
   line-height: 24px;
   font-weight: 400;
 
-  color: #0f0f0f;
-  background-color: #f6f6f6;
+  color: #ffffff;
+  background-color: #11c163;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,17 +23,6 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
 .row {
   display: flex;
   justify-content: center;
@@ -46,7 +35,7 @@ a {
 }
 
 a:hover {
-  color: #535bf2;
+  color: #e5f253;
 }
 
 h1 {
@@ -91,7 +80,7 @@ button {
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
-    background-color: #2f2f2f;
+    background-color: #f335a7;
   }
 
   a:hover {
