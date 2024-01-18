@@ -4,19 +4,12 @@
     import logo from "$lib/assets/Peach.png";
 	import Tabs from "../components/Tabs.svelte";
 
-    // function windowMaximize() {
-    //     if appWindow.isMaximized {
-    //         appWindow.max
-    //     }
-    // }
-
     function popupAboutWindow() {
         alert("hello")
     }
 </script>
 
-<!-- <div class="rounded"> -->
-<div class="flex rounded-tl-md rounded-tr-md bg-[#e6497d] overflow-hidden h-screen">
+<div class="flex rounded-lg bg-[#e6497d] overflow-hidden h-screen">
     <div data-tauri-drag-region class="titlebar">
         <div data-tauri-drag-region class="icon-container">
             <img
@@ -46,7 +39,7 @@
             </div>
         </div>
     </div>
-    <div class="flex mt-5 grow">
+    <div class="flex mt-10 grow">
         <h1>hello!!</h1>
         <h1>hello!!</h1>
         <h1>hello!!</h1>
@@ -59,6 +52,7 @@
         justify-content: flex-start;
         margin-left: 5px;
         margin-top: 1px;
+        min-width: max-content;
         width: 100%;
     }
 
@@ -83,6 +77,7 @@
     }
     .titlebar-button {
     display: inline-flex;
+    min-width: max-content;
     justify-content: center;
     align-items: center;
     width: 30px;
