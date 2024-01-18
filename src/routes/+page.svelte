@@ -1,7 +1,8 @@
 <script lang="ts">
+    import "../app.css"
     import { appWindow } from "@tauri-apps/api/window";
-    import Tab from "../components/Tab.svelte";
     import logo from "$lib/assets/Peach.png";
+	import Tabs from "../components/Tabs.svelte";
 
     // function windowMaximize() {
     //     if appWindow.isMaximized {
@@ -14,7 +15,8 @@
     }
 </script>
 
-<div class="rounded">
+<!-- <div class="rounded"> -->
+<div class="flex rounded-tl-md rounded-tr-md bg-[#e6497d] overflow-hidden h-screen">
     <div data-tauri-drag-region class="titlebar">
         <div data-tauri-drag-region class="icon-container">
             <img
@@ -23,11 +25,8 @@
             on:click={popupAboutWindow}
             />
         </div>
-        <div class="tab-container">
-            <Tab/>
-            <Tab/>
-            <Tab/>
-            <Tab/>
+        <div class="flex gap-x-px mt-1">
+            <Tabs/>
         </div>
         <div data-tauri-drag-region class="titlebar-button-container">
             <div class="titlebar-button" id="titlebar-minimize" on:click={appWindow.minimize}>
@@ -47,7 +46,7 @@
             </div>
         </div>
     </div>
-    <div class="main-view">
+    <div class="flex mt-5 grow">
         <h1>hello!!</h1>
         <h1>hello!!</h1>
         <h1>hello!!</h1>
@@ -55,24 +54,6 @@
 </div>
 
 <style>
-    .main-view {
-        /* display: flex; */
-        margin-top: 5px;
-        flex-grow: 1;
-    }
-
-    .tab-container {
-        display: flex;
-    }
-
-    .rounded {
-        display: flex;
-        border-radius: 10px;
-        background-color: rgb(230, 73, 125);
-        height: 100vh;
-        overflow: hidden;
-    }
-
     .icon-container {
         display: flex;
         justify-content: flex-start;
