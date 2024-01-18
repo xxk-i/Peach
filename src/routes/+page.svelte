@@ -7,6 +7,7 @@
     function popupAboutWindow() {
         alert("hello")
     }
+
 </script>
 
 <div class="flex rounded-lg bg-[#e6497d] overflow-hidden h-screen">
