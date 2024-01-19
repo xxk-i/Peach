@@ -54,6 +54,8 @@
         margin-left: 5px;
         margin-top: 1px;
         min-width: max-content;
+        max-width: max-content;
+        margin-right: 30px;
         width: 100%;
     }
 
