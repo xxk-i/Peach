@@ -3,11 +3,19 @@
     import { appWindow } from "@tauri-apps/api/window";
     import logo from "$lib/assets/Peach.png";
 	import Tabs from "../components/Tabs.svelte";
+	import { invoke } from "@tauri-apps/api";
 
     function popupAboutWindow() {
         alert("hello")
     }
 
+    function getVolumes() {
+        invoke('get_volumes')
+    }
+
+    function getDrives() {
+        invoke('get_drives')
+    }
 </script>
 
 <div class="flex rounded-lg bg-[#e6497d] overflow-hidden h-screen">
@@ -40,11 +48,17 @@
             </div>
         </div>
     </div>
-    <div class="flex mt-10 grow">
+    <div class="flex mt-10 grow-0">
         <h1>hello!!</h1>
         <h1>hello!!</h1>
         <h1>hello!!</h1>
     </div>
+    <button on:click={getVolumes}>
+        get volumes
+    </button>
+    <button on:click={getDrives}>
+        get drives
+    </button>
 </div>
 
 <style>
