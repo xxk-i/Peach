@@ -3,30 +3,25 @@
     import { appWindow } from "@tauri-apps/api/window";
     import logo from "$lib/assets/Peach.png";
 	import Tabs from "../components/Tabs.svelte";
-	import { invoke } from "@tauri-apps/api";
+    import FileBrowser from "../components/FileBrowser.svelte";
 
     function popupAboutWindow() {
         alert("hello")
     }
-
-    function getVolumes() {
-        invoke('get_volumes')
-    }
-
-    function getDrives() {
-        invoke('get_drives')
-    }
 </script>
 
-<div class="flex rounded-lg bg-[#e6497d] overflow-hidden h-screen">
+<div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col">
     <div data-tauri-drag-region class="titlebar">
-        <div data-tauri-drag-region class="icon-container">
-            <img
-            src={logo}
-            alt="Peach"
-            on:click={popupAboutWindow}
-            />
-        </div>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+            <div class="grow-1 shrink-0">
+                <img
+                class="ml-1 mr-3 max-h-full max-w-full"
+                src={logo}
+                alt="Peach"
+                on:click={popupAboutWindow}
+                />
+            </div>
         <div class="flex gap-x-px mt-1">
             <Tabs/>
         </div>
@@ -48,49 +43,30 @@
             </div>
         </div>
     </div>
-    <div class="flex mt-10 grow-0">
-        <h1>hello!!</h1>
-        <h1>hello!!</h1>
-        <h1>hello!!</h1>
-    </div>
-    <button on:click={getVolumes}>
-        get volumes
-    </button>
-    <button on:click={getDrives}>
-        get drives
-    </button>
+    <FileBrowser/>
 </div>
 
 <style>
-    .icon-container {
-        display: flex;
-        justify-content: flex-start;
-        margin-left: 5px;
-        margin-top: 1px;
-        min-width: max-content;
-        max-width: max-content;
-        margin-right: 30px;
-        width: 100%;
-    }
-
     .titlebar-button-container {
         display: flex;
         justify-content: flex-end;
         width: 100%;
+        min-width: min-content;
     }
 
     .titlebar {
     display: flex;
     flex-direction: row;
+    flex: 0 1 auto;
     height: 30px;
     background: rgb(230, 73, 125);
     user-select: none;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
+    margin-top: 1;
     }
     .titlebar-button {
     display: inline-flex;

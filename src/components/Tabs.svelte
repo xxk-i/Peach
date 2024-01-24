@@ -11,8 +11,6 @@
     });
 
     function handleClick(index: number) {
-        console.log("selectedTab: " + selectedTab);
-        console.log("index: " + index);
         if (index == selectedTab) {
             return;
         } else {
