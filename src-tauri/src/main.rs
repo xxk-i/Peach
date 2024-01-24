@@ -131,6 +131,11 @@ async fn get_files_at_path(path: String) -> DirectoryInfo {
     } 
 }
 
+#[tauri::command]
+async fn open_file(path: String) {
+    open::that(path).expect("Failed to open file");
+}
+
 fn main() {
   tauri::Builder::default()
     // Hack from https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495 that makes resizing really fast
@@ -139,7 +144,7 @@ fn main() {
             std::thread::sleep(std::time::Duration::from_nanos(1));
         }
     })
-    .invoke_handler(tauri::generate_handler![get_drives, get_volumes, get_files_at_path])
+    .invoke_handler(tauri::generate_handler![get_drives, get_volumes, get_files_at_path, open_file])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

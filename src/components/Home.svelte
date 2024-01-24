@@ -13,7 +13,7 @@
         return invoke('get_drives')
     }
 
-    function handleClick(letter: string) {
+    function enterDrive(letter: string) {
         directory += letter + ":\\";
         directoryInfoPromise = invoke('get_files_at_path', {path: directory})
     }
@@ -24,13 +24,17 @@
     }
 
     function leaveFolder() {
-        // If we are at root
+        // If we are at root, leave to Home
         if (directory.endsWith(":\\")) {
             directory = ""
         } else {
             directory = directory.slice(0, directory.lastIndexOf("\\"));
             directoryInfoPromise = invoke('get_files_at_path', {path: directory})
         }
+    }
+
+    function openFile(path: string) {
+        invoke('open_file', {path: directory + "\\" + path})
     }
 
     function getRowUtility(drives: Array<MountedDrive>) {
@@ -47,7 +51,7 @@
         {:then drives}
             <div class="grid grid-flow-row place-content-center gap-y-5 gap-x-5 {getRowUtility(drives)}">
                 {#each drives as drive}
-                    <Drive info={drive} on:click={() => handleClick(drive.letter)}/>
+                    <Drive info={drive} on:click={() => enterDrive(drive.letter)}/>
                 {/each}
             </div>
         {/await}
@@ -64,7 +68,7 @@
                 <button class="text-left" on:click={() => enterFolder(folder)}>[F] {folder}</button>
             {/each}
             {#each info.files.sort() as file}
-                <button class="text-left">[Fi] {file}</button>
+                <button class="text-left" on:click={() => openFile(file)}>[Fi] {file}</button>
             {/each}
         </div>
     {/await}
