@@ -1,21 +1,9 @@
 <script lang="ts">
-    import type { TabInfo } from "$lib/tab.ts";
     import Tab from "./Tab.svelte";
-    import { onMount } from "svelte";
-
-    let selectedTab = 0;
-    let tabs: TabInfo[] = [];
-
-    onMount(() => {
-        addDefaultTab();
-    });
+    import { tabsCache } from "$lib/tab";
 
     function handleClick(index: number) {
-        if (index == selectedTab) {
-            return;
-        } else {
-            selectedTab = index;
-        }
+        $tabsCache.selected = index;
     }
 
     function handleAddTabClick() {
@@ -23,40 +11,36 @@
     }
     
     function addDefaultTab() {
-        tabs = [...tabs, {
-            index: tabs.length,
+        $tabsCache.selected = $tabsCache.tabs.length;
+        $tabsCache.tabs.push({
             name: "Home",
-            dir: ""
-        }];
-
-        // set selection to newest tab
-        selectedTab = tabs.length - 1;
+            dir: "/Home/"
+        });
     }
 
-    function handleTabMiddleClick(index: number) {
-        if (tabs.length == 1) {
-            return;
-        }
+    function handleAuxClick(event: MouseEvent, index: number) {
+        if (event.button == 1) {
+            if ($tabsCache.tabs.length == 1) {
+                return;
+            }
 
-        // keep selection the same after adjusting array
-        if (selectedTab >= index) {
-            selectedTab -= 1;
-        }
+            // keep selection the same after adjusting array
+            if ($tabsCache.selected >= index) {
+                $tabsCache.selected -= 1;
+            }
 
-        tabs = [...tabs.slice(0, index), ...tabs.slice(index, tabs.length - 1)];
+            $tabsCache.tabs = [...$tabsCache.tabs.slice(0, index), ...$tabsCache.tabs.slice(index + 1, $tabsCache.tabs.length)];
+        }
     }
 </script>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-{#each tabs as tab}
-    {#if selectedTab == tab.index}
-        <Tab info={tab} color={"bg-[#e6497d]"} on:click={() => handleClick(tab.index)} on:auxclick={() => handleTabMiddleClick(tab.index)}/>
-    {:else}
-        <Tab info={tab} on:click={() => handleClick(tab.index)} on:auxclick={() => handleTabMiddleClick(tab.index)}/>
-    {/if}
+{#each $tabsCache.tabs as tab, i}
+    <Tab open={$tabsCache.selected == i} name={tab.name} on:click={() => handleClick(i)} on:auxclick={(event) => handleAuxClick(event, i)}/>
 {/each}
-<button class="border-t border-l border-r rounded-t" on:click={handleAddTabClick}>
+
+<button class="border-t border-l border-r rounded-t" on:click={() => handleAddTabClick()}>
     <span class="material-symbols-outlined">
     add
     </span>

@@ -2,8 +2,8 @@
     import "../app.css"
     import { appWindow } from "@tauri-apps/api/window";
     import logo from "$lib/assets/Peach.png";
-	import Tabs from "../components/Tabs.svelte";
-    import FileBrowser from "../components/FileBrowser.svelte";
+    import Tabs from "../components/Tabs.svelte";
+    import MainView from "../components/MainView.svelte";
 
     function popupAboutWindow() {
         alert("hello")
@@ -22,7 +22,7 @@
                 on:click={popupAboutWindow}
                 />
             </div>
-        <div class="flex gap-x-px mt-1">
+        <div data-tauri-drag-region class="flex gap-x-px mt-1 w-full shrink">
             <Tabs/>
         </div>
         <div data-tauri-drag-region class="titlebar-button-container">
@@ -43,15 +43,15 @@
             </div>
         </div>
     </div>
-    <FileBrowser/>
+    <MainView/>
 </div>
 
 <style>
     .titlebar-button-container {
         display: flex;
         justify-content: flex-end;
-        width: 100%;
         min-width: min-content;
+        flex-grow: 0;
     }
 
     .titlebar {
