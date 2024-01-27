@@ -1,49 +1,13 @@
 <script lang="ts">
     import Tab from "./Tab.svelte";
-    import { createEventDispatcher, onMount } from "svelte";
     import { tabsInfo } from "$lib/tab";
 
-    const dispatch = createEventDispatcher();
-
-    onMount(() => {
-        dispatchAddTabEvent(-1);
-    });
-
     function handleClick(index: number) {
-        if (index == $tabsInfo.selected) {
-            return
-        }
-
-        let oldIndex = $tabsInfo.selected;
         $tabsInfo.selected = index;
-        dispatchSwitchTabEvent(oldIndex);
     }
-
+    
     function addTab() {
-        let previousIndex = $tabsInfo.selected;
-        $tabsInfo.selected = $tabsInfo.count;
         $tabsInfo.count += 1;
-        dispatchAddTabEvent(previousIndex);
-    }
-
-    function dispatchAddTabEvent(previousIndex: number) {
-        dispatch('addTab', {
-            previousIndex,
-            dir: "/Home/"
-        });
-    }
-
-    function dispatchCloseTabEvent(index: number) {
-        dispatch('closeTab', {
-            index: index,
-        });
-    }
-
-    function dispatchSwitchTabEvent(oldIndex: number) {
-        dispatch('switchTab', {
-            oldIndex,
-            newIndex: $tabsInfo.selected,
-        });
     }
 
     function handleAuxClick(event: MouseEvent, index: number) {
@@ -58,7 +22,6 @@
             }
 
             $tabsInfo.count -= 1;
-            dispatchCloseTabEvent(index);
         }
     }
 </script>

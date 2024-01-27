@@ -55,7 +55,7 @@
 </script>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-<div class="grow shrink basis-auto overflow-auto">
+<div class="grow shrink basis-auto">
     {#await directoryInfoPromise}
         <div class="flex place-content-center size-full">
             <Spinner color="purple" />
