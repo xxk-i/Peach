@@ -1,19 +1,11 @@
 import { writable } from "svelte/store";
 
-export type TabInfo = {
-    name: string;
-    dir: string;
+export type TabsInfo = {
+    count: number,
+    selected: number,
 };
 
-export type TabsCache = {
-    selected: number;
-    tabs: TabInfo[];
-}
-
-export const tabsCache = writable<TabsCache>({
+export const tabsInfo = writable<TabsInfo>({
+    count: 1,
     selected: 0,
-    tabs: [{
-        name: "Home",
-        dir: "/Home/",
-    }],
 });

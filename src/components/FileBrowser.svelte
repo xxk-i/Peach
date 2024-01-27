@@ -2,23 +2,28 @@
     import { Spinner } from "flowbite-svelte";
 	import { invoke } from "@tauri-apps/api";
 	import type { DirectoryInfo } from "$lib/files";
-	import { tabsCache } from "$lib/tab";
+	import { getContext, onDestroy } from "svelte";
+	import type { Writable } from "svelte/store";
+
+    let dir: string;
+    let ctx: Writable<string> = getContext("dir");
+
+    const unsubscribe = ctx.subscribe((value) => dir = value);
 
     let directoryInfoPromise: Promise<DirectoryInfo>;
-    $: directoryInfoPromise = invoke('get_files_at_path', {path: $tabsCache.tabs[$tabsCache.selected].dir});
+    $: directoryInfoPromise = invoke('get_files_at_path', {path: dir});
 
     function getItemsInDirectory() {
-        directoryInfoPromise = invoke('get_files_at_path', {path: $tabsCache.tabs[$tabsCache.selected].dir});
+        directoryInfoPromise = invoke('get_files_at_path', {path: dir});
     }
 
     function setDir(dir: string, name: string) {
-        $tabsCache.tabs[$tabsCache.selected].dir = dir;
-        $tabsCache.tabs[$tabsCache.selected].name = name;
+        ctx.set(dir);
+        // $tabsCache.tabs[$tabsCache.selected].name = name;
     }
 
     function updateDir(dir: string, name: string) {
-        $tabsCache.tabs[$tabsCache.selected].dir += dir;
-        $tabsCache.tabs[$tabsCache.selected].name = name;
+        ctx.update((value) => value += dir);
     }
 
     function enterFolder(folder: string) {
@@ -28,11 +33,10 @@
 
     function leaveFolder() {
         // If we are at root, leave to Home
-        if ($tabsCache.tabs[$tabsCache.selected].dir.endsWith(":/")) {
+        if (dir.endsWith(":/")) {
             setDir("/Home/", "Home");
         } else {
-            let oldDir = $tabsCache.tabs[$tabsCache.selected].dir;
-            let newDir = oldDir.slice(0, oldDir.lastIndexOf("/"));
+            let newDir = dir.slice(0, dir.lastIndexOf("/"));
             let name = newDir.slice(newDir.lastIndexOf("/") + 1, newDir.length);
             if (name != "") {
                 setDir(newDir, name);
@@ -44,8 +48,10 @@
     }
 
     function openFile(path: string) {
-        invoke('open_file', {path: $tabsCache.tabs[$tabsCache.selected].dir + "/" + path})
+        invoke('open_file', {path: dir + "/" + path})
     }
+
+    onDestroy(unsubscribe);
 </script>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />

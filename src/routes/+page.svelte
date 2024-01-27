@@ -4,10 +4,72 @@
     import logo from "$lib/assets/Peach.png";
     import Tabs from "../components/Tabs.svelte";
     import MainView from "../components/MainView.svelte";
+	import { writable } from "svelte/store";
+    import { tabsInfo } from "$lib/tab";
+
+    let hiddenViews: HTMLElement;
+    let mainView: HTMLElement;
+
+    // const unsubscribe = tabsInfo.subscribe((value) => {
+    //     if (!info) {
+    //         info = value;
+    //         return;
+    //     }
+
+    //     if (value.selected != info.selected) {
+    //         swapTabs(info.selected, value.selected);
+    //     }
+    // });
 
     function popupAboutWindow() {
         alert("hello")
     }
+
+    function onSwitchTab(event: CustomEvent<{oldIndex: number, newIndex: number}>) {
+        swapTabs(event.detail.oldIndex, event.detail.newIndex);
+    }
+    
+    function swapTabs(oldIndex: number, newIndex: number) {
+        dismountView(oldIndex);
+
+        console.log(newIndex);
+        console.log(hiddenViews.childNodes[newIndex]);
+
+        // send the new view to mainView
+        mainView.appendChild(hiddenViews.childNodes[newIndex]);
+
+        // remove the view from hiddenViews
+        hiddenViews.removeChild(hiddenViews.childNodes[newIndex]);
+    }
+
+    // Removes the mainView and stores it in hiddenViews at its index
+    function dismountView(index: number) {
+        hiddenViews.insertBefore(mainView.childNodes[0], hiddenViews.childNodes[index]);
+
+        // removing all children because svelte inserts these comments e.g. <!-- Home -->
+        while (mainView.firstChild) {
+            mainView.removeChild(mainView.firstChild);
+        }
+    }
+
+    function addDefaultTab(event: CustomEvent<{previousIndex: number, dir: string}>) {
+        if (mainView.childNodes.length != 0) {
+            dismountView(event.detail.previousIndex);
+        }
+
+        new MainView({
+            target: mainView,
+            props: {
+                dir: writable(event.detail.dir),
+            }
+        });
+    }
+
+    function closeTab(event: CustomEvent<{index: number}>) {
+        
+    }
+
+    // onDestroy(unsubscribe);
 </script>
 
 <div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col">
@@ -23,7 +85,7 @@
                 />
             </div>
         <div data-tauri-drag-region class="flex gap-x-px mt-1 w-full shrink">
-            <Tabs/>
+            <Tabs on:addTab={addDefaultTab} on:closeTab={closeTab} on:switchTab={onSwitchTab}/>
         </div>
         <div data-tauri-drag-region class="titlebar-button-container">
             <div class="titlebar-button" id="titlebar-minimize" on:click={appWindow.minimize}>
@@ -43,7 +105,8 @@
             </div>
         </div>
     </div>
-    <MainView/>
+    <div class="hidden" bind:this={hiddenViews}/>
+    <div class="flex min-h-0 overflow-auto place-content-center size-full" bind:this={mainView}/>
 </div>
 
 <style>

@@ -3,7 +3,10 @@
 	import { invoke } from "@tauri-apps/api";
     import type { MountedDrive } from "$lib/mounted_drive";
     import Drive from "../components/Drive.svelte"
-    import { tabsCache } from "$lib/tab";
+	import { getContext } from "svelte";
+	import { get, type Writable } from "svelte/store";
+
+    let dir: Writable<string> = getContext("dir");
 
     let drivesPromise: Promise<Array<MountedDrive>> = getDrives();
 
@@ -12,8 +15,8 @@
     }
 
     function enterDrive(letter: string) {
-        $tabsCache.tabs[$tabsCache.selected].dir = letter + ":/";
-        $tabsCache.tabs[$tabsCache.selected].name = letter + ":/";
+        dir.set(letter + ":/");
+        // name = letter + ":/";
     }
 
     function getRowUtility(drives: Array<MountedDrive>) {
