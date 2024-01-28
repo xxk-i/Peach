@@ -3,10 +3,12 @@
     import { appWindow } from "@tauri-apps/api/window";
     import logo from "$lib/assets/Peach.png";
     import Tabs from "../components/Tabs.svelte";
-    import { tabsInfo, type TabsInfo } from "$lib/tab";
-	import MainView from "../components/MainView.svelte";
-	import { writable } from "svelte/store";
 
+    let contentContainer: HTMLElement;
+
+    function popupAboutWindow() {
+        alert("hello");
+    }
 </script>
 
 <div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col">
@@ -22,9 +24,11 @@
                 />
             </div>
         <div data-tauri-drag-region class="flex gap-x-px mt-1 w-full shrink">
-            <Tabs/>
+            {#if contentContainer}
+                <Tabs contentContainer={contentContainer}/>
+            {/if}
         </div>
-        <div data-tauri-drag-region class="titlebar-button-container">
+        <div class="titlebar-button-container">
             <div class="titlebar-button" id="titlebar-minimize" on:click={appWindow.minimize}>
                 <img
                 src="https://api.iconify.design/mdi:window-minimize.svg"
@@ -43,9 +47,7 @@
         </div>
     </div>
 
-    {#each Array($tabsInfo.count) as _, i}
-        <MainView index={i} dir={writable("/Home/")}></MainView>
-    {/each}
+    <div class="content_container flex grow" bind:this={contentContainer}/>
 </div>
 
 <style>

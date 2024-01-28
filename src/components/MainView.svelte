@@ -6,12 +6,11 @@
 	import { writable } from "svelte/store";
 
     export let dir = writable("");
-    export let index: number;
 
     setContext("dir", dir);
 </script>
 
-<div class="grow overflow-auto {index == $tabsInfo.selected ? "" : "hidden"}">
+<div class="mainview" style="width: 100%; height: 100%;">
     {#if $dir === "/Home/"}
         <Home/>
     {:else}

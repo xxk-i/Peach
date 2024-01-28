@@ -4,6 +4,7 @@
 	import type { DirectoryInfo } from "$lib/files";
 	import { getContext, onDestroy } from "svelte";
 	import type { Writable } from "svelte/store";
+    import { tabsInfo } from "$lib/tab";
 
     let dir: string;
     let ctx: Writable<string> = getContext("dir");
@@ -19,11 +20,13 @@
 
     function setDir(dir: string, name: string) {
         ctx.set(dir);
-        // $tabsCache.tabs[$tabsCache.selected].name = name;
+        $tabsInfo.buttonInfos = [...$tabsInfo.buttonInfos.slice(0, $tabsInfo.selected), name, ...$tabsInfo.buttonInfos.slice($tabsInfo.selected + 1, $tabsInfo.buttonInfos.length)];
+        // $tabsInfo.buttonInfos[$tabsInfo.selected] = name;
     }
 
     function updateDir(dir: string, name: string) {
         ctx.update((value) => value += dir);
+        $tabsInfo.buttonInfos = [...$tabsInfo.buttonInfos.slice(0, $tabsInfo.selected), name, ...$tabsInfo.buttonInfos.slice($tabsInfo.selected + 1, $tabsInfo.buttonInfos.length)];
     }
 
     function enterFolder(folder: string) {
