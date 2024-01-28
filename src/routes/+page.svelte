@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <div class="content_container flex grow" bind:this={contentContainer}/>
+    <div class="content_container size-full" bind:this={contentContainer}/>
 </div>
 
 <style>
