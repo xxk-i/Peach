@@ -61,6 +61,24 @@
             }
         }
     }
+
+    function moveTab(from: number, to: number) {
+        if ($tabsInfo.selected == from) {
+            $tabsInfo.selected = to;
+        }
+
+        else if ($tabsInfo.selected == to) {
+            $tabsInfo.selected = from;
+        }
+
+        let old = contentContainer.replaceChild(contentContainer.children[2], contentContainer.children[0]);
+        contentContainer.appendChild(old);
+        contentContainer = contentContainer;
+        let oldName = $tabsInfo.buttonInfos[0];
+        $tabsInfo.buttonInfos[0] = $tabsInfo.buttonInfos[2];
+        $tabsInfo.buttonInfos[2] = oldName;
+        $tabsInfo.buttonInfos = $tabsInfo.buttonInfos;
+    }
 </script>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
@@ -73,4 +91,8 @@
     <span class="material-symbols-outlined">
     add
     </span>
+</button>
+
+<button on:click={() => moveTab(2, 0)}>
+    swap
 </button>

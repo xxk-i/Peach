@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Spinner } from "flowbite-svelte";
+    import { Progressbar, Spinner } from "flowbite-svelte";
 	import { invoke } from "@tauri-apps/api";
 	import type { DirectoryInfo } from "$lib/files";
 	import { getContext, onDestroy } from "svelte";
@@ -84,6 +84,7 @@
             {/each}
         </div>
     {/await}
+    <!-- <Progressbar progress={Math.floor(info.storage_used / info.capacity * 100)} color="yellow"/> -->
 </div>
 <style>
 .material-symbols-outlined {

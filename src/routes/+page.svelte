@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <div class="content_container size-full" bind:this={contentContainer}/>
+    <div class="content_container grow min-h-0" bind:this={contentContainer}/>
 </div>
 
 <style>
