@@ -110,8 +110,3 @@
     add
     </span>
 </button>
-
-<!-- 
-<button on:click={() => moveTab(2, 0)}>
-    swap
-</button> -->

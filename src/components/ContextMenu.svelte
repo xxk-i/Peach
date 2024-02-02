@@ -9,7 +9,7 @@
     let buttons;
 
     let unsubscribe = contextMenuInfo.subscribe((value) => {
-        if (isShowing) {
+        if ($mousePosition) {
             left = $mousePosition.x;
             top = $mousePosition.y;
         }
