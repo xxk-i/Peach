@@ -2,26 +2,33 @@
     import "../app.css"
     import { appWindow } from "@tauri-apps/api/window";
     import logo from "$lib/assets/Peach.png";
-	import Tabs from "../components/Tabs.svelte";
+    import Tabs from "../components/Tabs.svelte";
+
+    let contentContainer: HTMLElement;
 
     function popupAboutWindow() {
-        alert("hello")
+        alert("hello");
     }
 </script>
 
-<div class="flex rounded-lg bg-[#e6497d] overflow-hidden h-screen">
+<div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col">
     <div data-tauri-drag-region class="titlebar">
-        <div data-tauri-drag-region class="icon-container">
-            <img
-            src={logo}
-            alt="Peach"
-            on:click={popupAboutWindow}
-            />
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+            <div class="grow-1 shrink-0">
+                <img
+                class="ml-1 mr-3 max-h-full max-w-full"
+                src={logo}
+                alt="Peach"
+                on:click={popupAboutWindow}
+                />
+            </div>
+        <div data-tauri-drag-region class="flex gap-x-px mt-1 w-full shrink">
+            {#if contentContainer}
+                <Tabs contentContainer={contentContainer}/>
+            {/if}
         </div>
-        <div class="flex gap-x-px mt-1">
-            <Tabs/>
-        </div>
-        <div data-tauri-drag-region class="titlebar-button-container">
+        <div class="titlebar-button-container">
             <div class="titlebar-button" id="titlebar-minimize" on:click={appWindow.minimize}>
                 <img
                 src="https://api.iconify.design/mdi:window-minimize.svg"
@@ -39,41 +46,31 @@
             </div>
         </div>
     </div>
-    <div class="flex mt-10 grow">
-        <h1>hello!!</h1>
-        <h1>hello!!</h1>
-        <h1>hello!!</h1>
-    </div>
+
+    <div class="content_container grow min-h-0" bind:this={contentContainer}/>
 </div>
 
 <style>
-    .icon-container {
-        display: flex;
-        justify-content: flex-start;
-        margin-left: 5px;
-        margin-top: 1px;
-        min-width: max-content;
-        width: 100%;
-    }
-
     .titlebar-button-container {
         display: flex;
         justify-content: flex-end;
-        width: 100%;
+        min-width: min-content;
+        flex-grow: 0;
     }
 
     .titlebar {
     display: flex;
     flex-direction: row;
+    flex: 0 1 auto;
     height: 30px;
     background: rgb(230, 73, 125);
     user-select: none;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
+    margin-top: 1;
     }
     .titlebar-button {
     display: inline-flex;
