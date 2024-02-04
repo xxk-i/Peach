@@ -69,7 +69,7 @@ async fn get_drives() -> Vec<MountedVolume> {
             let drive = (drives >> i) & 1;
             if drive == 1 {
                 mounted_volumes.push(
-                    get_disk_space_info(letters[i])
+                    get_disk_space_info(letters[i]).await
                 );
             }
         }
@@ -87,7 +87,8 @@ async fn get_drives() -> Vec<MountedVolume> {
 }
 
 // https://stackoverflow.com/questions/74173128/how-to-get-a-pcwstr-object-from-a-path-or-string
-fn get_disk_space_info(disk: char) -> MountedVolume {
+#[tauri::command]
+async fn get_disk_space_info(disk: char) -> MountedVolume {
     let mut root_path = String::from(disk);
     root_path.push_str(":\\");
 
@@ -137,14 +138,14 @@ async fn open_file(path: String) {
 }
 
 fn main() {
-  tauri::Builder::default()
-    // Hack from https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495 that makes resizing really fast
-    .on_window_event(|e| {
-        if let WindowEvent::Resized(_) = e.event() {
-            std::thread::sleep(std::time::Duration::from_nanos(1));
-        }
-    })
-    .invoke_handler(tauri::generate_handler![get_drives, get_volumes, get_files_at_path, open_file])
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    tauri::Builder::default()
+        // Hack from https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495 that makes resizing really fast
+        .on_window_event(|e| {
+            if let WindowEvent::Resized(_) = e.event() {
+                std::thread::sleep(std::time::Duration::from_nanos(1));
+            }
+        })
+        .invoke_handler(tauri::generate_handler![get_drives, get_volumes, get_files_at_path, open_file, get_disk_space_info])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

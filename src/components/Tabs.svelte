@@ -4,6 +4,7 @@
     import { onMount } from "svelte";
 	import Tab from "./Tab.svelte";
     import { tabsInfo } from "$lib/tab";
+    import { contextMenuInfo } from "$lib/global";
 
     export let contentContainer: HTMLElement;
 
@@ -46,21 +47,26 @@
     }
 
     function handleAuxClick(event: MouseEvent, index: number) {
+        if (event.button == 1) {
+            closeTab(index);
+        }
+    }
+    
+    function closeTab(index: number) {
         if ($tabsInfo.buttonInfos.length == 1) {
             return;
         }
 
-        if (event.button == 1) {
-            let mainView = contentContainer.getElementsByClassName("mainview")[index];
-            contentContainer.removeChild(mainView);
+        let mainView = contentContainer.getElementsByClassName("mainview")[index];
+        contentContainer.removeChild(mainView);
 
-            $tabsInfo.buttonInfos = [...$tabsInfo.buttonInfos.slice(0, index), ...$tabsInfo.buttonInfos.slice(index + 1, $tabsInfo.buttonInfos.length)];
-            if ($tabsInfo.selected >= index) {
-                $tabsInfo.selected -= 1;
-                setViewToVisible($tabsInfo.selected);
-            }
+        $tabsInfo.buttonInfos = [...$tabsInfo.buttonInfos.slice(0, index), ...$tabsInfo.buttonInfos.slice(index + 1, $tabsInfo.buttonInfos.length)];
+        if ($tabsInfo.selected >= index) {
+            $tabsInfo.selected -= 1;
+            setViewToVisible($tabsInfo.selected);
         }
     }
+
 
     function moveTab(from: number, to: number) {
         if ($tabsInfo.selected == from) {
@@ -79,20 +85,28 @@
         $tabsInfo.buttonInfos[2] = oldName;
         $tabsInfo.buttonInfos = $tabsInfo.buttonInfos;
     }
+    
+    function setContextMenu(index: number) {
+        $contextMenuInfo.buttons = 
+        [
+            {
+                title: "Close Tab",
+                callback: () => { closeTab(index) }
+            }
+        ];
+
+        $contextMenuInfo.isShowing = true;
+    }
 </script>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
 {#each $tabsInfo.buttonInfos as name, i}
-    <Tab open={$tabsInfo.selected == i} name={name} on:click={() => swapToTab(i)} on:auxclick={(event) => handleAuxClick(event, i)}/>
+    <Tab open={$tabsInfo.selected == i} name={name} on:click={() => swapToTab(i)} on:auxclick={(event) => handleAuxClick(event, i)} on:contextmenu={() => setContextMenu(i)}/>
 {/each}
 
 <button class="border-t border-l border-r rounded-t" on:click={addTab}>
     <span class="material-symbols-outlined">
     add
     </span>
-</button>
-
-<button on:click={() => moveTab(2, 0)}>
-    swap
 </button>

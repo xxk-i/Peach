@@ -3,15 +3,24 @@
     import { appWindow } from "@tauri-apps/api/window";
     import logo from "$lib/assets/Peach.png";
     import Tabs from "../components/Tabs.svelte";
+    import { mousePosition } from "$lib/global";
+    import ContextMenu from "../components/ContextMenu.svelte";
 
     let contentContainer: HTMLElement;
 
     function popupAboutWindow() {
         alert("hello");
     }
+
+    function handleMouseMove(event: MouseEvent ) {
+        $mousePosition = {
+            x: event.clientX,
+            y: event.clientY,
+        };
+    }
 </script>
 
-<div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col">
+<div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col" on:mousemove={handleMouseMove}>
     <div data-tauri-drag-region class="titlebar">
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -48,6 +57,7 @@
     </div>
 
     <div class="content_container grow min-h-0" bind:this={contentContainer}/>
+    <ContextMenu/>
 </div>
 
 <style>
