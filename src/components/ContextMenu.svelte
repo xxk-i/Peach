@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { mousePosition } from "$lib/global";
+    import { mousePosition, type ContextMenuButton } from "$lib/global";
     import { contextMenuInfo } from "$lib/global";
 	import { onDestroy } from "svelte";
 
     let left = 0;
     let top = 0;
     let isShowing = false;
-    let buttons;
+    let buttons: ContextMenuButton[] = [];
 
     let unsubscribe = contextMenuInfo.subscribe((value) => {
         if ($mousePosition) {
@@ -26,7 +26,7 @@
 
 {#if isShowing}
     <div class="context_menu" style="left: {left + "px"}; top: {top + "px"};">
-        {#each $contextMenuInfo.buttons as button}
+        {#each buttons as button}
             <button class="text-left" on:click={() => button.callback()}>{button.title}</button>
         {/each}
     </div>

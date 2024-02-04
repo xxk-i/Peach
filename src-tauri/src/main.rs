@@ -138,14 +138,14 @@ async fn open_file(path: String) {
 }
 
 fn main() {
-  tauri::Builder::default()
-    // Hack from https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495 that makes resizing really fast
-    .on_window_event(|e| {
-        if let WindowEvent::Resized(_) = e.event() {
-            std::thread::sleep(std::time::Duration::from_nanos(1));
-        }
-    })
-    .invoke_handler(tauri::generate_handler![get_drives, get_volumes, get_files_at_path, open_file, get_disk_space_info])
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    tauri::Builder::default()
+        // Hack from https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495 that makes resizing really fast
+        .on_window_event(|e| {
+            if let WindowEvent::Resized(_) = e.event() {
+                std::thread::sleep(std::time::Duration::from_nanos(1));
+            }
+        })
+        .invoke_handler(tauri::generate_handler![get_drives, get_volumes, get_files_at_path, open_file, get_disk_space_info])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

@@ -2,7 +2,6 @@
     import { Progressbar, Spinner } from "flowbite-svelte";
 	import { invoke } from "@tauri-apps/api";
 	import { getContext, onDestroy } from "svelte";
-    import { tabsInfo } from "$lib/tab";
     import FileListing from "./FileListing.svelte";
 	import type { DirectoryInfo } from "$lib/files";
 	import type { Writable } from "svelte/store";

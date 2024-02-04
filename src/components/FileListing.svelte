@@ -19,7 +19,6 @@
     function setDir(dir: string, name: string) {
         ctx.set(dir);
         $tabsInfo.buttonInfos = [...$tabsInfo.buttonInfos.slice(0, $tabsInfo.selected), name, ...$tabsInfo.buttonInfos.slice($tabsInfo.selected + 1, $tabsInfo.buttonInfos.length)];
-        // $tabsInfo.buttonInfos[$tabsInfo.selected] = name;
     }
 
     function updateDir(dir: string, name: string) {
@@ -54,6 +53,8 @@
         $contextMenuInfo.buttons = fileContextButtons;
         $contextMenuInfo.isShowing = true;
     }
+    
+    onDestroy(unsubscribe);
 </script>
 
 <div class="grid grid-flow-row place-content-start w-full">
