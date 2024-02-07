@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Tab from "./Tab.svelte";
+    import { contextMenuInfo } from "$lib/global";
     import { createEventDispatcher } from "svelte";
 
     export let ids: number[];
@@ -29,23 +30,24 @@
         }
     }
     
-    // function setContextMenu(index: number) {
-    //     $contextMenuInfo.buttons = 
-    //     [
-    //         {
-    //             title: "Close Tab",
-    //             callback: () => { closeTab(index) }
-    //         }
-    //     ];
+    function setContextMenu(index: number) {
+        $contextMenuInfo.buttons = 
+        [
+            {
+                title: "Close Tab",
+                callback: () => { removeTab(index) }
+            }
+        ];
 
-    //     $contextMenuInfo.isShowing = true;
-    // }
+        $contextMenuInfo.isShowing = true;
+    }
+    
 </script>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
 {#each ids as id (id)}
-    <Tab open={id == selectedId} name={id.toString()} on:click={() => selectTab(id)} on:auxclick={(event) => handleAuxClick(event, id)}/>
+    <Tab open={id == selectedId} name={id.toString()} on:click={() => selectTab(id)} on:auxclick={(event) => handleAuxClick(event, id)} on:contextmenu={() => setContextMenu(id)}/>
 {/each}
 
 <button class="border-t border-l border-r rounded-t" on:click={addTab}>
