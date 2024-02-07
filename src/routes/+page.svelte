@@ -5,8 +5,12 @@
     import Tabs from "../components/Tabs.svelte";
     import { mousePosition } from "$lib/global";
     import ContextMenu from "../components/ContextMenu.svelte";
+	import MainView from "../components/MainView.svelte";
+	import { writable } from "svelte/store";
 
-    let contentContainer: HTMLElement;
+    let id = 0;
+    let selectedId = 0;
+    let mainViews: number[] = [0];
 
     function popupAboutWindow() {
         alert("hello");
@@ -17,6 +21,35 @@
             x: event.clientX,
             y: event.clientY,
         };
+    }
+
+    function addMainView() {
+        id += 1;
+        mainViews = [...mainViews, id];
+    }
+    
+    function selectMainView(event: CustomEvent) {
+        selectedId = event.detail.id;
+    }
+
+    function closeMainView(event: CustomEvent) {
+        if (mainViews.length == 0) {
+            return;
+        }
+
+        let index = mainViews.findIndex((element) => element == event.detail.id);
+
+        // if we close the current tab, switch selected to
+        // previous (or next if we are the first tab)
+        if (event.detail.id == selectedId) {
+            if (selectedId == mainViews[0]) {
+                selectedId == mainViews[1];
+            } else {
+                selectedId = mainViews[index - 1];
+            }
+        }
+
+        mainViews = [...mainViews.slice(0, index), ...mainViews.slice(index + 1, mainViews.length)]
     }
 </script>
 
@@ -33,9 +66,7 @@
                 />
             </div>
         <div data-tauri-drag-region class="flex gap-x-px mt-1 w-full shrink">
-            {#if contentContainer}
-                <Tabs contentContainer={contentContainer}/>
-            {/if}
+            <Tabs ids={mainViews} selectedId={selectedId} on:addTab={addMainView} on:selectTab={selectMainView} on:removeTab={closeMainView}/>
         </div>
         <div class="titlebar-button-container">
             <div class="titlebar-button" id="titlebar-minimize" on:click={appWindow.minimize}>
@@ -56,7 +87,13 @@
         </div>
     </div>
 
-    <div class="content_container grow min-h-0" bind:this={contentContainer}/>
+    <div class="grow min-h-0">
+        {#each mainViews as id (id)}
+            <MainView hidden={id != selectedId} dir={writable("/Home/")}></MainView>
+        {/each}
+    </div>
+
+    <!-- <div class="content_container grow min-h-0" bind:this={contentContainer}/> -->
     <ContextMenu/>
 </div>
 

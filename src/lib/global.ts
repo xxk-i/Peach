@@ -1,5 +1,13 @@
 import { writable } from "svelte/store";
 
+export let id = 0;
+
+export function getNextID() {
+    let ret = id;
+    id += 1;
+    return ret;
+}
+
 // Mouse
 export type MousePosition = {
     x: number,
