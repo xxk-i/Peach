@@ -43,7 +43,7 @@
         // previous (or next if we are the first tab)
         if (event.detail.id == selectedId) {
             if (selectedId == mainViews[0]) {
-                selectedId == mainViews[1];
+                selectedId = mainViews[1];
             } else {
                 selectedId = mainViews[index - 1];
             }
