@@ -18,8 +18,36 @@
         }
     });
 
+    function openFile(event: CustomEvent) {
+        invoke('open_file', {path: dir + "/" + event.detail.path})
+    }
+
+    function enterDir(event: CustomEvent) {
+        dir = dir + "/" + event.detail.dir;
+    }
+
+    function leaveDir(event: CustomEvent) {
+        // If we are at root, leave to Home
+        if (dir.endsWith(":/")) {
+            dir = "/Home/"
+            ctx.set("/Home/");
+        } else {
+            let newDir = dir.slice(0, dir.lastIndexOf("/"));
+            let name = newDir.slice(newDir.lastIndexOf("/") + 1, newDir.length);
+            if (name != "") {
+                dir = newDir;
+            } else { // dir is back at disk root
+                dir = newDir;
+            }
+        }
+    }
+
     let directoryInfoPromise: Promise<DirectoryInfo>;
-    $: directoryInfoPromise = invoke('get_files_at_path', {path: dir});
+    $: {
+        if (dir != "/Home/") {
+            directoryInfoPromise = invoke('get_files_at_path', {path: dir});
+        }
+    }
 
     onDestroy(unsubscribe);
 </script>
@@ -32,7 +60,7 @@
                 <Spinner color="purple" />
             </div>
         {:then info}
-            <FileListing info={info}/>
+            <FileListing info={info} on:clickFile={openFile} on:enterDir={enterDir} on:leaveDir={leaveDir}/>
         {/await}
     </div>
     <div class="ml-1 mr-1 mb-1">

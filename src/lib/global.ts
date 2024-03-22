@@ -1,12 +1,21 @@
 import { writable } from "svelte/store";
 
 export let id = 0;
+export let selectedId = 0;
 
 export function getNextID() {
     let ret = id;
     id += 1;
     return ret;
 }
+
+export type MainViewInfo = {
+    id: number;
+    dir: string;
+    name: string;
+}
+
+export let globalContext = writable<MainViewInfo[]>();
 
 // Mouse
 export type MousePosition = {

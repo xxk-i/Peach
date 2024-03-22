@@ -2,69 +2,57 @@
 	import type { DirectoryInfo } from "$lib/files";
 	import type { Writable } from "svelte/store";
     import { getContext, onDestroy } from "svelte";
-    import { invoke } from "@tauri-apps/api";
-    import { tabsInfo } from "$lib/tab";
     import { fileContextButtons } from "$lib/files";
 	import { contextMenuInfo } from "$lib/global";
+    import { createEventDispatcher } from "svelte";
 
     export let info: DirectoryInfo;
 
-    let dir: string;
-    let ctx: Writable<string> = getContext("dir");
-    
-    const unsubscribe = ctx.subscribe((value) => { 
-        dir = value
-    });
+    const dispatch = createEventDispatcher();
 
-    function setDir(dir: string, name: string) {
-        ctx.set(dir);
-        $tabsInfo.buttonInfos = [...$tabsInfo.buttonInfos.slice(0, $tabsInfo.selected), name, ...$tabsInfo.buttonInfos.slice($tabsInfo.selected + 1, $tabsInfo.buttonInfos.length)];
+    function enterDir(dir: string) {
+        // updateDir("/" + folder, folder);
+        dispatch('enterDir', {
+            dir,
+        });
     }
 
-    function updateDir(dir: string, name: string) {
-        ctx.update((value) => value += dir);
-        $tabsInfo.buttonInfos = [...$tabsInfo.buttonInfos.slice(0, $tabsInfo.selected), name, ...$tabsInfo.buttonInfos.slice($tabsInfo.selected + 1, $tabsInfo.buttonInfos.length)];
-    }
-
-    function enterFolder(folder: string) {
-        updateDir("/" + folder, folder);
-    }
-
-    function leaveFolder() {
+    function leaveDir() {
         // If we are at root, leave to Home
-        if (dir.endsWith(":/")) {
-            setDir("/Home/", "Home");
-        } else {
-            let newDir = dir.slice(0, dir.lastIndexOf("/"));
-            let name = newDir.slice(newDir.lastIndexOf("/") + 1, newDir.length);
-            if (name != "") {
-                setDir(newDir, name);
-            } else { // dir is back at disk root
-                setDir(newDir, newDir);
-            }
-        }
+        // if (dir.endsWith(":/")) {
+        //     setDir("/Home/", "Home");
+        // } else {
+        //     let newDir = dir.slice(0, dir.lastIndexOf("/"));
+        //     let name = newDir.slice(newDir.lastIndexOf("/") + 1, newDir.length);
+        //     if (name != "") {
+        //         setDir(newDir, name);
+        //     } else { // dir is back at disk root
+        //         setDir(newDir, newDir);
+        //     }
+        // }
+        dispatch('leaveDir');
     }
 
     function openFile(path: string) {
-        invoke('open_file', {path: dir + "/" + path})
+        dispatch('clickFile', {
+            path,
+        });
     }
 
     function setContextMenu(file: string) {
         $contextMenuInfo.buttons = fileContextButtons;
         $contextMenuInfo.isShowing = true;
     }
-    
-    onDestroy(unsubscribe);
 </script>
 
 <div class="grid grid-flow-row place-content-start w-full">
-    <button class="text-left" on:click={leaveFolder}>..</button>
+    <button class="text-left" on:click={leaveDir}>..</button>
     {#each info.folders.sort() as folder}
         <div class="flex flex-row gap-x-1 w-full">
             <span class="material-symbols-outlined">
             folder
             </span>
-            <button class="text-left w-full" on:click={() => enterFolder(folder)}>{folder}</button>
+            <button class="text-left w-full" on:click={() => enterDir(folder)}>{folder}</button>
         </div>
     {/each}
     {#each info.files.sort() as file}

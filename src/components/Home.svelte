@@ -5,7 +5,6 @@
     import Drive from "../components/Drive.svelte"
 	import { getContext } from "svelte";
 	import { get, type Writable } from "svelte/store";
-	import { tabsInfo } from "$lib/tab";
 
     let dir: Writable<string> = getContext("dir");
 
@@ -17,7 +16,6 @@
 
     function enterDrive(letter: string) {
         dir.set(letter + ":/");
-        $tabsInfo.buttonInfos[$tabsInfo.selected] = (letter + ":/");
     }
 
     function getRowUtility(drives: Array<MountedDrive>) {
