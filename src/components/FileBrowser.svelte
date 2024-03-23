@@ -7,6 +7,7 @@
 	import { getContext, onDestroy } from "svelte";
     import FileListing from "./FileListing.svelte";
 	import type { TabInfo } from "$lib/stores";
+    import { os_path } from "$lib";
 
     let diskSpaceInfoPromise: Promise<MountedDrive>;
     let dir = "";
@@ -28,7 +29,7 @@
     }
 
     async function enterDir(event: CustomEvent) {
-        let newPath = dir + event.detail.dir + "/";
+        let newPath = dir + event.detail.dir;
         tabInfo.update((store) => ({
             id: store.id,
             name: event.detail.dir,
@@ -36,18 +37,17 @@
         }));
     }
 
-    function leaveDir(event: CustomEvent) {
+    async function leaveDir(event: CustomEvent) {
         // If we are at root, leave to Home
-        if (dir.length == 1 || dir.endsWith(":/")) {
+        if (await os_path.pop(dir) === dir) {
             tabInfo.update((store) => ({
-                ...store,
-                directory: "/Home/",
+                id: store.id,
+                name: "Home",
+                directory: "/Home/"
             }))
         } else {
-            let newDir = dir.slice(0, dir.lastIndexOf("/"));
+            let newDir = await os_path.pop(dir)
             let name = newDir.slice(newDir.lastIndexOf("/") + 1, newDir.length);
-            console.log(dir);
-            console.log(newDir);
             tabInfo.update((store) => ({
                 id: store.id,
                 name: name,

@@ -18,7 +18,8 @@
     // TODO fix windows
     function enterDrive(mount_point: string) {
         tabInfo.update((store) => ({
-            ...store,
+            id: store.id,
+            name: mount_point,
             directory: mount_point
         }));
     }
