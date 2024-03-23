@@ -1,27 +1,19 @@
 <script lang="ts">
 	import Tab from "./Tab.svelte";
     import { contextMenuInfo } from "$lib/global";
-    import { createEventDispatcher } from "svelte";
-
-    export let ids: number[];
-    export let selectedId: number;
-
-    const dispatch = createEventDispatcher();
+    import { tabStore } from "$lib/stores";
+	import { get } from "svelte/store";
 
     function addTab() {
-        dispatch('addTab');
+        tabStore.addTab();
     }
 
     function selectTab(id: number) {
-        dispatch('selectTab', {
-            id,
-        });
+        tabStore.setSelected(id);
     }
 
     function removeTab(id: number) {
-        dispatch('removeTab', {
-            id,
-        });
+        tabStore.closeTab(id);
     }
 
     function handleAuxClick(event: MouseEvent, id: number) {
@@ -46,8 +38,11 @@
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-{#each ids as id (id)}
-    <Tab open={id == selectedId} name={id.toString()} on:click={() => selectTab(id)} on:auxclick={(event) => handleAuxClick(event, id)} on:contextmenu={() => setContextMenu(id)}/>
+{#each $tabStore.infos as info (get(info).id)}
+    <Tab {info}
+        on:click={() => selectTab(get(info).id)}
+        on:auxclick={(event) => handleAuxClick(event, get(info).id)}
+        on:contextmenu={() => setContextMenu(get(info).id)}/>
 {/each}
 
 <button class="border-t border-l border-r rounded-t" on:click={addTab}>

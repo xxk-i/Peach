@@ -1,6 +1,6 @@
 export type MountedDrive = {
     name?: string,
-    letter: string,
+    mount_point: string,
     storage_used: number,
     capacity: number
 }

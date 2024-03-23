@@ -6,11 +6,8 @@
     import { mousePosition } from "$lib/global";
     import ContextMenu from "../components/ContextMenu.svelte";
 	import MainView from "../components/MainView.svelte";
-	import { writable } from "svelte/store";
-
-    let id = 0;
-    let selectedId = 0;
-    let mainViews: number[] = [0];
+	import { get } from "svelte/store";
+    import { tabStore } from "$lib/stores";
 
     function popupAboutWindow() {
         alert("hello");
@@ -23,34 +20,6 @@
         };
     }
 
-    function addMainView() {
-        id += 1;
-        mainViews = [...mainViews, id];
-    }
-    
-    function selectMainView(event: CustomEvent) {
-        selectedId = event.detail.id;
-    }
-
-    function closeMainView(event: CustomEvent) {
-        if (mainViews.length == 0) {
-            return;
-        }
-
-        let index = mainViews.findIndex((element) => element == event.detail.id);
-
-        // if we close the current tab, switch selected to
-        // previous (or next if we are the first tab)
-        if (event.detail.id == selectedId) {
-            if (selectedId == mainViews[0]) {
-                selectedId = mainViews[1];
-            } else {
-                selectedId = mainViews[index - 1];
-            }
-        }
-
-        mainViews = [...mainViews.slice(0, index), ...mainViews.slice(index + 1, mainViews.length)]
-    }
 </script>
 
 <div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col" on:mousemove={handleMouseMove}>
@@ -66,7 +35,7 @@
                 />
             </div>
         <div data-tauri-drag-region class="flex gap-x-px mt-1 w-full shrink">
-            <Tabs ids={mainViews} selectedId={selectedId} on:addTab={addMainView} on:selectTab={selectMainView} on:removeTab={closeMainView}/>
+            <Tabs/>
         </div>
         <div class="titlebar-button-container">
             <div class="titlebar-button" id="titlebar-minimize" on:click={appWindow.minimize}>
@@ -88,8 +57,8 @@
     </div>
 
     <div class="grow min-h-0">
-        {#each mainViews as id (id)}
-            <MainView hidden={id != selectedId} dir={writable("/Home/")}></MainView>
+        {#each $tabStore.infos as info (get(info).id)}
+            <MainView tabInfo={info}></MainView>
         {/each}
     </div>
 

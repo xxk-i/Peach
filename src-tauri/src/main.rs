@@ -2,16 +2,15 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
+use sysinfo::Disks;
 
 use tauri::WindowEvent;
-use windows::core::HSTRING;
-use windows::Win32::Storage::FileSystem::{FindFirstVolumeW, GetDiskFreeSpaceExW, GetLogicalDriveStringsW, GetLogicalDrives};
 
 #[derive(serde::Serialize)]
 struct MountedVolume {
     name: Option<String>,
-    letter: char,
+    mount_point: String,
     storage_used: u64,
     capacity: u64
 }
@@ -24,6 +23,7 @@ struct DirectoryInfo {
 
 #[tauri::command]
 async fn get_volumes() {
+    /*
     let mut volume_name: [u16; 1000] = [0; 1000];
 
     unsafe {
@@ -33,62 +33,29 @@ async fn get_volumes() {
         let handle = FindFirstVolumeW(&mut volume_name).unwrap();
         println!("{}", String::from_utf16_lossy(&volume_name))
     }
+    */
 }
 
 #[tauri::command]
 async fn get_drives_string() {
-    let mut buffer: [u16; 1000] = [0; 1000];
+    // let mut buffer: [u16; 1000] = [0; 1000];
 
-    unsafe {
-        let return_value = GetLogicalDriveStringsW(Some(&mut buffer));
-        if return_value > 1000 {
-            println!("Buffer was not big enough for get_drives()");
-        } else if return_value == 0{
-            println!("get_drives() failed (return_value is 0)");
-        } else {
-            println!("{}", String::from_utf16_lossy(&buffer));
-        }
-    }
-}
-
-#[tauri::command]
-async fn get_drives() -> Vec<MountedVolume> {
-    let mut mounted_volumes: Vec<MountedVolume> = Vec::new();
-    let mut drives: u32;
-    let letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
-
-    unsafe {
-        drives = GetLogicalDrives();
-    }
-
-    if drives == 0 {
-        println!("get_drives() failed (drives is 0)");
-    } else {
-        // drive represents a bitmask of each available disk, mapped to a letter (e.g. C:)
-        for i in 0..letters.len() {
-            let drive = (drives >> i) & 1;
-            if drive == 1 {
-                mounted_volumes.push(
-                    get_disk_space_info(letters[i]).await
-                );
-            }
-        }
-    }
-
-    // let mut output = String::new();
-    // for i in 0..available_drives.len() - 2 {
-    //     output.push_str(format!("{}:\\, ", available_drives.chars().nth(i).unwrap()).as_str());
+    // unsafe {
+    //     let return_value = GetLogicalDriveStringsW(Some(&mut buffer));
+    //     if return_value > 1000 {
+    //         println!("Buffer was not big enough for get_drives()");
+    //     } else if return_value == 0{
+    //         println!("get_drives() failed (return_value is 0)");
+    //     } else {
+    //         println!("{}", String::from_utf16_lossy(&buffer));
+    //     }
     // }
-    // output.push_str(format!("{}:\\", available_drives.chars().nth(available_drives.len() - 1).unwrap()).as_str());
-
-    // println!("{output}")
-
-    mounted_volumes
 }
 
 // https://stackoverflow.com/questions/74173128/how-to-get-a-pcwstr-object-from-a-path-or-string
 #[tauri::command]
 async fn get_disk_space_info(disk: char) -> MountedVolume {
+    /*
     let mut root_path = String::from(disk);
     root_path.push_str(":\\");
 
@@ -108,6 +75,31 @@ async fn get_disk_space_info(disk: char) -> MountedVolume {
         storage_used: (total_bytes - free_bytes) / 1024 / 1024 / 1024,
         capacity: total_gigabytes,
     }
+    */
+    MountedVolume {
+        name: Some(String::from("Disk")),
+        mount_point: String::from("/"),
+        storage_used: 3,
+        capacity: 64
+    }
+}
+
+#[tauri::command]
+async fn get_drives() -> Vec<MountedVolume> {
+    let disks = Disks::new_with_refreshed_list();
+    let mut mounted_volumes = Vec::new();
+    for disk in &disks {
+        mounted_volumes.push(
+            MountedVolume {
+                name: Some(disk.name().to_str().unwrap().to_owned()),
+                mount_point: disk.mount_point().to_str().unwrap().to_owned(),
+                storage_used: disk.total_space() - disk.available_space(),
+                capacity: disk.total_space()
+            }
+        );
+    }
+
+    mounted_volumes
 }
 
 #[tauri::command]

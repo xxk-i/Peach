@@ -1,44 +1,58 @@
 <script lang="ts">
+	import type { DirectoryInfo } from "$lib/files";
+	import type { Writable } from "svelte/store";
+	import type { MountedDrive } from "$lib/mounted_drive";
     import { Progressbar, Spinner } from "flowbite-svelte";
 	import { invoke } from "@tauri-apps/api";
 	import { getContext, onDestroy } from "svelte";
     import FileListing from "./FileListing.svelte";
-	import type { DirectoryInfo } from "$lib/files";
-	import type { Writable } from "svelte/store";
-	import type { MountedDrive } from "$lib/mounted_drive";
+	import type { TabInfo } from "$lib/stores";
 
-    let dir: string;
     let diskSpaceInfoPromise: Promise<MountedDrive>;
-    let ctx: Writable<string> = getContext("dir");
+    let dir = "";
+    let tabName = "";
 
-    const unsubscribe = ctx.subscribe((value) => { 
-        dir = value
+    let tabInfo: Writable<TabInfo> = getContext("tabInfo");
+
+    const unsubscribe = tabInfo.subscribe((info) => { 
         if (!diskSpaceInfoPromise) {
-            diskSpaceInfoPromise = invoke('get_disk_space_info', {disk: dir[0]});
+            diskSpaceInfoPromise = invoke('get_disk_space_info', {disk: info.directory});
         }
+
+        dir = info.directory;
+        tabName = info.name;
     });
 
     function openFile(event: CustomEvent) {
         invoke('open_file', {path: dir + "/" + event.detail.path})
     }
 
-    function enterDir(event: CustomEvent) {
-        dir = dir + "/" + event.detail.dir;
+    async function enterDir(event: CustomEvent) {
+        let newPath = dir + event.detail.dir + "/";
+        tabInfo.update((store) => ({
+            id: store.id,
+            name: event.detail.dir,
+            directory: newPath
+        }));
     }
 
     function leaveDir(event: CustomEvent) {
         // If we are at root, leave to Home
-        if (dir.endsWith(":/")) {
-            dir = "/Home/"
-            ctx.set("/Home/");
+        if (dir.length == 1 || dir.endsWith(":/")) {
+            tabInfo.update((store) => ({
+                ...store,
+                directory: "/Home/",
+            }))
         } else {
             let newDir = dir.slice(0, dir.lastIndexOf("/"));
             let name = newDir.slice(newDir.lastIndexOf("/") + 1, newDir.length);
-            if (name != "") {
-                dir = newDir;
-            } else { // dir is back at disk root
-                dir = newDir;
-            }
+            console.log(dir);
+            console.log(newDir);
+            tabInfo.update((store) => ({
+                id: store.id,
+                name: name,
+                directory: newDir,
+            }))
         }
     }
 

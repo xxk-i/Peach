@@ -4,9 +4,10 @@
     import type { MountedDrive } from "$lib/mounted_drive";
     import Drive from "../components/Drive.svelte"
 	import { getContext } from "svelte";
-	import { get, type Writable } from "svelte/store";
+	import { type Writable } from "svelte/store";
+	import type { TabInfo } from "$lib/stores";
 
-    let dir: Writable<string> = getContext("dir");
+    let tabInfo: Writable<TabInfo> = getContext("tabInfo");
 
     let drivesPromise: Promise<Array<MountedDrive>> = getDrives();
 
@@ -14,8 +15,12 @@
         return invoke('get_drives')
     }
 
-    function enterDrive(letter: string) {
-        dir.set(letter + ":/");
+    // TODO fix windows
+    function enterDrive(mount_point: string) {
+        tabInfo.update((store) => ({
+            ...store,
+            directory: mount_point
+        }));
     }
 
     function getRowUtility(drives: Array<MountedDrive>) {
@@ -30,7 +35,7 @@
     {:then drives}
         <div class="grid grid-flow-row place-content-center gap-y-5 gap-x-5 {getRowUtility(drives)}">
             {#each drives as drive}
-                <Drive info={drive} on:click={() => enterDrive(drive.letter)}/>
+                <Drive info={drive} on:click={() => enterDrive(drive.mount_point)}/>
             {/each}
         </div>
     {/await}
