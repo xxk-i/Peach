@@ -29,7 +29,7 @@
     }
 
     async function enterDir(event: CustomEvent) {
-        let newPath = dir + event.detail.dir;
+        let newPath = await os_path.push(dir, event.detail.dir);
         tabInfo.update((store) => ({
             id: store.id,
             name: event.detail.dir,
@@ -50,7 +50,7 @@
             let name = newDir.slice(newDir.lastIndexOf("/") + 1, newDir.length);
             tabInfo.update((store) => ({
                 id: store.id,
-                name: name,
+                name: newDir === "/" ? newDir : name,
                 directory: newDir,
             }))
         }

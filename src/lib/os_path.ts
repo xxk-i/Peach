@@ -16,8 +16,12 @@ async function is_root(path: string): Promise<boolean> {
     }
 }
 
+async function push(p: string, folder: string): Promise<string> {
+    return path.join(p, folder);
+}
+
 async function pop(p: string): Promise<string> {
     return path.join(p, "..");
 }
 
-export { get_root, is_root, pop };
+export { get_root, is_root, push, pop };

@@ -13,7 +13,7 @@
     "allowlist": {
       "all": true
     },
-    "macOSPrivateApi": false,
+    "macOSPrivateApi": true,
     "bundle": {
       "active": true,
       "category": "DeveloperTool",

@@ -26,14 +26,12 @@
     <div data-tauri-drag-region class="titlebar">
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-            <div class="grow-1 shrink-0">
-                <img
-                class="ml-1 mr-3 max-h-full max-w-full"
-                src={logo}
-                alt="Peach"
-                on:click={popupAboutWindow}
-                />
-            </div>
+            <img
+            class="ml-1 mr-3 max-h-full max-w-full"
+            src={logo}
+            alt="Peach"
+            on:click={popupAboutWindow}
+            />
         <div data-tauri-drag-region class="flex gap-x-px mt-1 w-full shrink">
             <Tabs/>
         </div>
@@ -72,6 +70,7 @@
         justify-content: flex-end;
         min-width: min-content;
         flex-grow: 0;
+        flex-shrink: 0;
     }
 
     .titlebar {
