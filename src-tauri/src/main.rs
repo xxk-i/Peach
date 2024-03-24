@@ -7,6 +7,8 @@ use sysinfo::Disks;
 
 use tauri::WindowEvent;
 
+mod icon_cache;
+
 #[derive(serde::Serialize)]
 struct MountedVolume {
     name: Option<String>,
@@ -21,35 +23,52 @@ struct DirectoryInfo {
     files: Vec<String>,
 }
 
-#[tauri::command]
-async fn get_volumes() {
-    /*
-    let mut volume_name: [u16; 1000] = [0; 1000];
+#[derive(serde::Serialize)]
+struct InstalledApplication {
+    name: String,
+    icon: String,
+    path: String
+}
 
-    unsafe {
-        // The FindFirstVolumeW wrapper from the windows crate automatically calls
-        // GetLastError and combines everything into its return Result
-        // so we don't have to do that
-        let handle = FindFirstVolumeW(&mut volume_name).unwrap();
-        println!("{}", String::from_utf16_lossy(&volume_name))
+#[cfg(target_os = "macos")]
+fn get_applications_macos() -> Vec<InstalledApplication> {
+    let mut apps = Vec::new();
+    let paths = fs::read_dir(PathBuf::from("/Applications")).unwrap();
+
+    for entry in paths {
+        let path_type = entry.as_ref().unwrap().file_type().unwrap();
+        if path_type.is_dir() && entry.as_ref().unwrap().file_name().to_str().unwrap().ends_with(".app") {
+            let icon_path = format!("/Applications/{}/{}", entry.as_ref().unwrap().file_name().to_str().unwrap(), "Contents/Resources");
+            if let Ok(resources) = fs::read_dir(PathBuf::from(icon_path)) {
+                for resource in resources {
+                    if resource.as_ref().unwrap().file_type().unwrap().is_file() && resource.as_ref().unwrap().file_name().to_str().unwrap().ends_with(".icns") {
+                        let name = entry.as_ref().unwrap().file_name().to_str().unwrap().strip_suffix(".app").unwrap().to_owned();
+                        apps.push(InstalledApplication {
+                            name,
+                            icon: resource.as_ref().unwrap().path().to_str().unwrap().to_owned(),
+                            path: entry.as_ref().unwrap().path().to_str().unwrap().to_owned(),
+                        });
+                        break;
+                    }
+                }
+            }
+        }
     }
-    */
+    
+    apps
 }
 
 #[tauri::command]
-async fn get_drives_string() {
-    // let mut buffer: [u16; 1000] = [0; 1000];
+async fn get_applications() -> Vec<InstalledApplication> {
+    if cfg!(target_os = "macos") {
+        return get_applications_macos();
+    }
 
-    // unsafe {
-    //     let return_value = GetLogicalDriveStringsW(Some(&mut buffer));
-    //     if return_value > 1000 {
-    //         println!("Buffer was not big enough for get_drives()");
-    //     } else if return_value == 0{
-    //         println!("get_drives() failed (return_value is 0)");
-    //     } else {
-    //         println!("{}", String::from_utf16_lossy(&buffer));
-    //     }
-    // }
+    vec![InstalledApplication {
+        name: String::from("hi"),
+        icon: String::from("hi"),
+        path: String::from("hi"),
+    }]
 }
 
 // https://stackoverflow.com/questions/74173128/how-to-get-a-pcwstr-object-from-a-path-or-string
@@ -130,6 +149,7 @@ async fn open_file(path: String) {
 }
 
 fn main() {
+    icon_cache::initialize();
     tauri::Builder::default()
         // Hack from https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495 that makes resizing really fast
         .on_window_event(|e| {
@@ -137,7 +157,7 @@ fn main() {
                 std::thread::sleep(std::time::Duration::from_nanos(1));
             }
         })
-        .invoke_handler(tauri::generate_handler![get_drives, get_volumes, get_files_at_path, open_file, get_disk_space_info])
+        .invoke_handler(tauri::generate_handler![get_drives, get_files_at_path, open_file, get_disk_space_info, get_applications])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

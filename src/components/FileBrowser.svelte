@@ -47,7 +47,7 @@
             }))
         } else {
             let newDir = await os_path.pop(dir)
-            let name = newDir.slice(newDir.lastIndexOf("/") + 1, newDir.length);
+            let name = os_path.get_name(newDir);
             tabInfo.update((store) => ({
                 id: store.id,
                 name: newDir === "/" ? newDir : name,

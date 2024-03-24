@@ -24,4 +24,8 @@ async function pop(p: string): Promise<string> {
     return path.join(p, "..");
 }
 
-export { get_root, is_root, push, pop };
+function get_name(p: string): string {
+    return p.slice(p.lastIndexOf("/") + 1, p.length);
+}
+
+export { get_root, is_root, push, pop, get_name };

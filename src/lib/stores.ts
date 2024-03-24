@@ -1,3 +1,4 @@
+import { os_path } from "$lib";
 import { get, writable, type Writable } from "svelte/store";
 
 export type TabInfo = {
@@ -21,11 +22,58 @@ function createTabStore() {
         }));
     }
 
+    function setSelectedToHome() {
+        update((store) => {
+            for (var info of store.infos) {
+                if (get(info).id == store.selected) {
+                    info.update((info) => ({
+                        id: info.id,
+                        name: "Home",
+                        directory: "/Home/"
+                    }));
+                }
+            }
+
+            return store;
+        });
+    }
+
+    function setSelectedToApps() {
+        update((store) => {
+            for (var info of store.infos) {
+                if (get(info).id == store.selected) {
+                    info.update((info) => ({
+                        ...info,
+                        directory: "/Apps/"
+                    }));
+                }
+            }
+
+            return store;
+        });
+    }
+
     function addTab() {
         update((store) => ({
             ...store,
             infos: [...store.infos, writable({name: "Home", id: store.nextId, directory: "/Home/"})],
             nextId: store.nextId + 1,
+        }));
+    }
+
+    function addTabAndSelectIt() {
+        update((store) => ({
+            selected: store.nextId,
+            infos: [...store.infos, writable({name: "Home", id: store.nextId, directory: "/Home/"})],
+            nextId: store.nextId + 1,
+        }));
+    }
+
+    function addTabAtPath(dir: string) {
+        update((store) => ({
+            selected: store.nextId,
+            infos: [...store.infos, writable({name: os_path.get_name(dir), id: store.nextId, directory: dir})],
+            nextId: store.nextId + 1
         }));
     }
 
@@ -60,7 +108,10 @@ function createTabStore() {
     return {
         subscribe,
         setSelected,
+        setSelectedToHome,
+        setSelectedToApps,
         addTab,
+        addTabAndSelectIt,
         closeTab
     }
 }

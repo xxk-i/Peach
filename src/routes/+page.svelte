@@ -5,9 +5,18 @@
     import Tabs from "../components/Tabs.svelte";
     import { mousePosition } from "$lib/global";
     import ContextMenu from "../components/ContextMenu.svelte";
-	import MainView from "../components/MainView.svelte";
-	import { get } from "svelte/store";
+	import Applications from "../components/Applications.svelte";
+    import MainView from "../components/MainView.svelte";
     import { tabStore } from "$lib/stores";
+    import { get } from "svelte/store";
+	import Sidebar from "../components/Sidebar.svelte";
+
+    let showSideBar = true;
+
+    function flipShowSideBar() {
+        showSideBar = !showSideBar;
+    }
+    
 
     function popupAboutWindow() {
         alert("hello");
@@ -30,7 +39,7 @@
             class="ml-1 mr-3 max-h-full max-w-full"
             src={logo}
             alt="Peach"
-            on:click={popupAboutWindow}
+            on:click={flipShowSideBar}
             />
         <div data-tauri-drag-region class="flex gap-x-px mt-1 w-full shrink">
             <Tabs/>
@@ -54,10 +63,16 @@
         </div>
     </div>
 
-    <div class="grow min-h-0">
-        {#each $tabStore.infos as info (get(info).id)}
-            <MainView tabInfo={info}></MainView>
-        {/each}
+    <div class="flex w-full h-full">
+        <div class="shrink grow-0 py-5 pr-5 pl-1 {showSideBar ? "" : "hidden"}">
+            <Sidebar/>
+        </div>
+
+        <div class="grow min-h-0 overflow-auto">
+            {#each $tabStore.infos as info (get(info).id)}
+                <MainView tabInfo={info}></MainView>
+            {/each}
+        </div>
     </div>
 
     <!-- <div class="content_container grow min-h-0" bind:this={contentContainer}/> -->

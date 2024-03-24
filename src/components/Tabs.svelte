@@ -8,6 +8,10 @@
         tabStore.addTab();
     }
 
+    function addTabAndSwitch() {
+        tabStore.addTabAndSelectIt();
+    }
+
     function selectTab(id: number) {
         tabStore.setSelected(id);
     }
@@ -45,7 +49,7 @@
         on:contextmenu={() => setContextMenu(get(info).id)}/>
 {/each}
 
-<button class="border-t border-l border-r rounded-t" on:click={addTab}>
+<button class="border-t border-l border-r rounded-t" on:click={addTabAndSwitch}>
     <span class="material-symbols-outlined">
     add
     </span>
