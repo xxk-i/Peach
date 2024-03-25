@@ -14,11 +14,15 @@
 <ul>
     <!-- <div class="flex flex-row gap-x-1 w-full"> -->
     <li>
-        <span class="material-symbols-outlined">cottage</span>
+        <br/>
+        <!-- intentional gap -->
+    </li>
+    <li>
+        <span class="material-symbols-outlined" style="top: 5px; position: relative;">cottage</span>
         <button on:click={goHome}>Home</button>
     </li>
     <li>
-        <span class="material-symbols-outlined">apps</span>
+        <span class="material-symbols-outlined" style="top: 5px; position: relative;">apps</span>
         <button on:click={goApps}>Apps</button>
     </li>
     <!-- </div> -->

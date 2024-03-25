@@ -45,22 +45,25 @@
     }
 </script>
 
-<div class="grid grid-flow-row place-content-start w-full">
-    <button class="text-left" on:click={leaveDir}>..</button>
+<ul>
+    <li>
+        <button class="text-left w-full" on:click={leaveDir}>..</button>
+    </li>
     {#each info.folders.sort() as folder}
-        <div class="flex flex-row gap-x-1 w-full">
-            <span class="material-symbols-outlined">
-            folder
-            </span>
-            <button class="text-left w-full" on:click={() => enterDir(folder)}>{folder}</button>
-        </div>
+        <li>
+            <button class="text-left w-full" on:click={() => enterDir(folder)}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder
+                </span>
+            {folder}</button>
+        </li>
     {/each}
     {#each info.files.sort() as file}
-        <div class="flex flex-row gap-x-1">
-            <span class="material-symbols-outlined">
-            draft
-            </span>
-            <button class="text-left" on:click={() => openFile(file)} on:contextmenu={() => setContextMenu(file)}>{file}</button>
-        </div>
+        <li>
+            <button class="text-left" on:click={() => openFile(file)} on:contextmenu={() => setContextMenu(file)}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">
+                draft
+                </span>
+            {file}</button>
+        </li>
     {/each}
-</div>
+</ul>

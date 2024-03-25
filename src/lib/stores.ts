@@ -43,7 +43,8 @@ function createTabStore() {
             for (var info of store.infos) {
                 if (get(info).id == store.selected) {
                     info.update((info) => ({
-                        ...info,
+                        id: info.id,
+                        name: "Apps",
                         directory: "/Apps/"
                     }));
                 }

@@ -17,7 +17,6 @@
         showSideBar = !showSideBar;
     }
     
-
     function popupAboutWindow() {
         alert("hello");
     }
@@ -64,7 +63,7 @@
     </div>
 
     <div class="flex w-full h-full">
-        <div class="shrink grow-0 py-5 pr-5 pl-1 {showSideBar ? "" : "hidden"}">
+        <div class="shrink grow-0 pr-5 pl-1 {showSideBar ? "" : "hidden"}">
             <Sidebar/>
         </div>
 
