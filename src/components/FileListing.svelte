@@ -45,6 +45,7 @@
     }
 </script>
 
+<!-- TODO fix span alignemtn shit idk -->
 <ul>
     <li>
         <button class="text-left w-full" on:click={leaveDir}>..</button>

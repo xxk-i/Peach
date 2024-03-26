@@ -22,6 +22,22 @@ function createTabStore() {
         }));
     }
 
+    function setSelectedToDir(dir: string, name: string) {
+        update((store) => {
+            for (var info of store.infos) {
+                if (get(info).id == store.selected) {
+                    info.update((info) => ({
+                        id: info.id,
+                        name: name,
+                        directory: dir
+                    }));
+                }
+            }
+
+            return store;
+        });
+    }
+
     function setSelectedToHome() {
         update((store) => {
             for (var info of store.infos) {
@@ -45,7 +61,7 @@ function createTabStore() {
                     info.update((info) => ({
                         id: info.id,
                         name: "Apps",
-                        directory: "/Apps/"
+                        directory: "/Applications/"
                     }));
                 }
             }
@@ -109,6 +125,7 @@ function createTabStore() {
     return {
         subscribe,
         setSelected,
+        setSelectedToDir,
         setSelectedToHome,
         setSelectedToApps,
         addTab,

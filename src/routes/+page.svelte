@@ -63,7 +63,7 @@
     </div>
 
     <div class="flex w-full h-full">
-        <div class="shrink grow-0 pr-5 pl-1 {showSideBar ? "" : "hidden"}">
+        <div class="shrink-0 grow-0 pr-5 pl-1 {showSideBar ? "" : "hidden"}">
             <Sidebar/>
         </div>
 
