@@ -7,11 +7,6 @@ export type TabInfo = {
     directory: string
 }
 
-type Tabs = {
-    infos: Writable<TabInfo>[],
-    selected: number
-}
-
 function createTabStore() {
     const { subscribe, set, update } = writable({infos: [writable({name: "Home", id: 0, directory: "/Home/"})], selected: 0, nextId: 1});
 

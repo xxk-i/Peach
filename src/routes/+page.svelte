@@ -32,8 +32,6 @@
 <div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col" on:mousemove={handleMouseMove}>
     <div data-tauri-drag-region class="titlebar flex flex-initial flex-grow-0
     max-h-[30px] bg-[rgb(230,_73,_125)] select-none rounded-tl-[10px] rounded-tr-[10px]">
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
             <img
             class="ml-1 mr-3 max-h-full"
             src={logo}

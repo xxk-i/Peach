@@ -16,6 +16,19 @@
         "all": true,
         "asset": true,
         "assetScope": ["**"]
+      },
+      "shell": {
+        "all": false,
+        "execute": true,
+        "open": true,
+        "scope": [
+          {
+            "name": "open-macos-app",
+            "cmd": "open",
+            "args": true
+          }
+        ],
+        "sidecar": true
       }
     },
     "macOSPrivateApi": true,
