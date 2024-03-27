@@ -62,15 +62,15 @@
         </div>
     </div>
 
-    <div class="flex flex-row overflow-auto">
-        <div class="shrink-0 grow-0 pr-5 pl-1 sticky {showSideBar ? "" : "hidden"}">
+    <div class="flex flex-row grow">
+        <div class="shrink-0 grow-0 pr-5 pl-1 max-h-fit {showSideBar ? "" : "hidden"}">
             <Sidebar/>
         </div>
 
-        <!-- <div class="grow min-h-0 overflow-auto basis-full self-stretch"> -->
-        {#each $tabStore.infos as info (get(info).id)}
-            <MainView tabInfo={info}></MainView>
-        {/each}
+        <!-- <div class="overflow-auto basis-full grow-0"> -->
+            {#each $tabStore.infos as info (get(info).id)}
+                <MainView tabInfo={info}></MainView>
+            {/each}
         <!-- </div> -->
     </div>
 

@@ -23,7 +23,7 @@
 </script>
 
 <!-- TODO fix all this await disaster -->
-<div class="flex justify-between overflow-auto flex-wrap">
+<div class="flex justify-between flex-wrap">
     {#await appCacheDirPromise}
     <Spinner/>
     {:then cacheDir}
