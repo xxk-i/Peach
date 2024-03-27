@@ -1,8 +1,16 @@
 <script lang="ts">
+	import { os_path } from "$lib";
 	import { tabStore } from "$lib/stores";
+	import { path } from "@tauri-apps/api";
 
     function goHome() {
         tabStore.setSelectedToHome();
+    }
+
+    async function goUserHome() {
+        let userHome = await path.join(await path.desktopDir(), ".."); // desktop parent is user $HOME lol
+        let name = await os_path.get_name(userHome);
+        tabStore.setSelectedToDir(userHome, name);
     }
 
     function goApps() {
@@ -16,6 +24,11 @@
         <li>
             <br/>
             <!-- intentional gap -->
+        </li>
+        <li>
+            <button on:click={goUserHome}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">person</span>
+            User</button>
         </li>
         <li>
             <button on:click={goHome}>

@@ -53,7 +53,7 @@ function createTabStore() {
             return store;
         });
     }
-
+    
     function setSelectedToApps() {
         update((store) => {
             for (var info of store.infos) {
