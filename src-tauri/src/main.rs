@@ -6,8 +6,6 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 use sysinfo::Disks;
 
-use tauri::Icon;
-use tauri::Manager;
 use tauri::WindowEvent;
 
 mod icon_cache;

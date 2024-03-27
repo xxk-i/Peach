@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { os_path } from "$lib";
-	import { folderPins } from "$lib/global";
-	import { get_name } from "$lib/os_path";
+	import { contextMenuInfo, folderPins } from "$lib/global";
 	import { tabStore } from "$lib/stores";
 	import { path } from "@tauri-apps/api";
 
@@ -18,14 +17,27 @@
     function goApps() {
         tabStore.setSelectedToApps();
     }
+
+    function showPinnedFolderContextMenu(folder: string) {
+        $contextMenuInfo.buttons = [
+            {
+                title: "Unpin",
+                callback: () => {
+                    let idx = $folderPins.findIndex(pin => pin == folder);
+                    $folderPins.splice(idx, 1);
+                    $folderPins = $folderPins;
+                }
+            }
+        ];
+        $contextMenuInfo.isShowing = true;
+    }
 </script>
 
 <nav class="select-none">
     <ul>
-        <!-- <div class="flex flex-row gap-x-1 w-full"> -->
         <li>
-            <br/>
             <!-- intentional gap -->
+            <br/>
         </li>
         <li>
             <button on:click={goUserHome}>
@@ -55,7 +67,7 @@
                 {#await os_path.get_name(folder)}
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">refresh</span>
                 {:then name}
-                    <button on:click={() => tabStore.setSelectedToDir(folder, name)}>
+                    <button on:click={() => tabStore.setSelectedToDir(folder, name)} on:contextmenu={() => showPinnedFolderContextMenu(folder)}>
                         <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder</span>
                     {name}</button>
                 {/await}

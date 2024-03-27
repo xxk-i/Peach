@@ -10,7 +10,6 @@
     const dispatch = createEventDispatcher();
 
     function enterDir(dir: string) {
-        // updateDir("/" + folder, folder);
         dispatch('enterDir', {
             dir,
         });
