@@ -31,7 +31,7 @@
         <Spinner/>
         {:then apps}
             {#each apps as app}
-            <div class="flex flex-col text-center text-wrap min-w-40 my-5">
+            <div class="flex flex-col text-center text-wrap min-w-40 py-5">
                 <button on:click={async () => await navigateToAppDir(app)}>
                     <img class="m-auto max-w-20 min-w-20 text-center" src={convertFileSrc(cacheDir + "/icons/" + app.name + ".png")} alt={app.name}/>
                     <h1 class="text-wrap">{app.name}</h1>
