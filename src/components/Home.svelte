@@ -30,7 +30,7 @@
 </script>
 
 <!-- File browser homepage, displays every browsable disk -->
-<div class="flex h-full place-content-center items-center">
+<div class="flex h-full place-content-center items-center grow">
     {#await drivesPromise}
         <Spinner color="purple" />
     {:then drives}
