@@ -1,8 +1,8 @@
-use std::{fs::{self, File}, io::{BufReader, BufWriter}, path::PathBuf};
-use tauri::PathResolver;
+use std::{collections::HashSet, fs::{self, File}, io::{BufReader, BufWriter}, path::PathBuf};
 use tauri_icns::{IconFamily, IconType};
 
 #[derive(serde::Serialize)]
+#[derive(Clone)]
 pub struct InstalledApplication {
     pub name: String,
     pub icon: String,
@@ -10,25 +10,48 @@ pub struct InstalledApplication {
 }
 
 pub struct IconCache {
-    pub apps: Vec<InstalledApplication>
+    pub apps: Vec<InstalledApplication>,
+    converted_icons: HashSet<String>,
+    icon_cache_dir: PathBuf,
 }
 
 impl IconCache {
-    pub fn create() -> IconCache {
-        IconCache {
-            apps: Self::get_applications_macos()
-        }
-    }
-
-    pub fn convert_icons(&self, app_handle: tauri::AppHandle) {
-        let mut icon_cache_dir = app_handle.path_resolver().app_cache_dir().unwrap();
+    pub fn initialize(app_cache_dir: PathBuf) -> IconCache {
+        let mut icon_cache_dir = app_cache_dir.clone(); 
         icon_cache_dir.push("icons");
+
         if icon_cache_dir.metadata().is_err() {
             std::fs::create_dir_all(&icon_cache_dir).unwrap();
         }
 
+        let mut cache = IconCache {
+            apps: Vec::new(),
+            converted_icons: HashSet::new(),
+            icon_cache_dir
+        };
+
+        cache.get_applications_macos();
+        cache.check_existing();
+        cache.convert_icons();
+
+        cache
+    }
+
+    fn check_existing(&mut self) {
+        for entry in fs::read_dir(&self.icon_cache_dir).unwrap() {
+            let entry = entry.unwrap();
+            self.converted_icons.insert(entry.file_name().to_str().unwrap().strip_suffix(".png").unwrap().to_owned());
+        }
+    }
+
+    // Converts leftover icons not contained in self.converted_icons
+    fn convert_icons(&mut self) {
         for app in &self.apps {
-            let mut png_path = icon_cache_dir.clone();
+            if self.converted_icons.contains(&app.name) {
+                continue;
+            }
+
+            let mut png_path = self.icon_cache_dir.clone();
             png_path.push(format!("{}.png", app.name));
             // Load an icon family from an ICNS file.
             let file = BufReader::new(File::open(&app.icon).unwrap());
@@ -41,11 +64,12 @@ impl IconCache {
             };
             let file = BufWriter::new(File::create(png_path).unwrap());
             image.write_png(file).unwrap();
+
+            self.converted_icons.insert(app.name.clone());
         }
     }
 
-    fn get_applications_macos() -> Vec<InstalledApplication> {
-        let mut apps = Vec::new();
+    fn get_applications_macos(&mut self) {
         let paths = fs::read_dir(PathBuf::from("/Applications")).unwrap();
 
         for entry in paths {
@@ -56,7 +80,7 @@ impl IconCache {
                     for resource in resources {
                         if resource.as_ref().unwrap().file_type().unwrap().is_file() && resource.as_ref().unwrap().file_name().to_str().unwrap().ends_with(".icns") {
                             let name = entry.as_ref().unwrap().file_name().to_str().unwrap().strip_suffix(".app").unwrap().to_owned();
-                            apps.push(InstalledApplication {
+                            self.apps.push(InstalledApplication {
                                 name,
                                 icon: resource.as_ref().unwrap().path().to_str().unwrap().to_owned(),
                                 path: entry.as_ref().unwrap().path().to_str().unwrap().to_owned(),
@@ -67,8 +91,6 @@ impl IconCache {
                 }
             }
         }
-        
-        apps
     }
 }
 // #[cfg(target_os = "macos")]

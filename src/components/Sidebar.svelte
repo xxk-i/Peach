@@ -18,12 +18,14 @@
         <!-- intentional gap -->
     </li>
     <li>
-        <span class="material-symbols-outlined" style="top: 5px; position: relative;">cottage</span>
-        <button on:click={goHome}>Home</button>
+        <button on:click={goHome}>
+            <span class="material-symbols-outlined" style="top: 5px; position: relative;">cottage</span>
+        Home</button>
     </li>
     <li>
-        <span class="material-symbols-outlined" style="top: 5px; position: relative;">apps</span>
-        <button on:click={goApps}>Apps</button>
+        <button on:click={goApps}>
+            <span class="material-symbols-outlined" style="top: 5px; position: relative;">apps</span>
+        Apps</button>
     </li>
     <!-- </div> -->
 </ul>

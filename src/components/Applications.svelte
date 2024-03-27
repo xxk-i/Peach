@@ -16,7 +16,6 @@
     let appsPromise: Promise<InstalledApplication[]> = invoke("get_applications");
     
     async function navigateToAppDir(app: InstalledApplication) {
-        console.log("hi");
         let name = await os_path.get_name(app.path);
         tabStore.setSelectedToDir(app.path, name);
     }

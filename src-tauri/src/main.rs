@@ -3,8 +3,11 @@
 
 use std::fs;
 use std::path::PathBuf;
+use std::sync::Mutex;
 use sysinfo::Disks;
 
+use tauri::Icon;
+use tauri::Manager;
 use tauri::WindowEvent;
 
 mod icon_cache;
@@ -25,20 +28,26 @@ struct DirectoryInfo {
     files: Vec<String>,
 }
 
+struct AppState {
+    icon_cache: Mutex<Option<IconCache>>
+}
+
 #[tauri::command]
-async fn get_applications(app_handle: tauri::AppHandle) -> Vec<InstalledApplication> {
+async fn get_applications(app_handle: tauri::AppHandle, state: tauri::State<'_, AppState>) -> Result<Vec<InstalledApplication>, String> {
+    let mut icon_cache = state.icon_cache.lock().unwrap();
     if cfg!(target_os = "macos") {
-        let iconCache = IconCache::create();
-        iconCache.convert_icons(app_handle);
-        return iconCache.apps;
-        // return get_applications_macos();
+        if icon_cache.is_none() {
+            *icon_cache = Some(IconCache::initialize(app_handle.path_resolver().app_cache_dir().unwrap()));
+        }
+        return Ok(icon_cache.as_ref().unwrap().apps.clone())
     }
 
-    vec![InstalledApplication {
-        name: String::from("hi"),
-        icon: String::from("hi"),
-        path: String::from("hi"),
-    }]
+    Err(String::from("Unsupported"))
+    // Ok(vec![InstalledApplication {
+    //     name: String::from("hi"),
+    //     icon: String::from("hi"),
+    //     path: String::from("hi"),
+    // }])
 }
 
 // https://stackoverflow.com/questions/74173128/how-to-get-a-pcwstr-object-from-a-path-or-string
@@ -120,6 +129,7 @@ async fn open_file(path: String) {
 
 fn main() {
     tauri::Builder::default()
+        .manage(AppState { icon_cache: Mutex::new(None) })
         // Hack from https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495 that makes resizing really fast
         .on_window_event(|e| {
             if let WindowEvent::Resized(_) = e.event() {
