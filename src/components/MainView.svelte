@@ -13,7 +13,7 @@
 </script>
 
 <!-- TODO fix this weird height: 0; min-height: 100%; meme (prevents growing in cross-axis direction)-->
-<div class="mainview overflow-auto basis-full grow-0 h-0 min-h-full {$tabInfo.id != $tabStore.selected ? "hidden" : ""}">
+<div class="flex mainview overflow-auto grow basis-full h-0 min-h-full {$tabInfo.id != $tabStore.selected ? "hidden" : ""}">
     {#if $tabInfo.directory === "/Home/"}
         <Home/>
     {:else if $tabInfo.directory === "/Applications/"}

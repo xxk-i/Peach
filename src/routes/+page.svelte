@@ -67,14 +67,11 @@
             <Sidebar/>
         </div>
 
-        <!-- <div class="overflow-auto basis-full grow-0"> -->
-            {#each $tabStore.infos as info (get(info).id)}
-                <MainView tabInfo={info}></MainView>
-            {/each}
-        <!-- </div> -->
+        {#each $tabStore.infos as info (get(info).id)}
+            <MainView tabInfo={info}></MainView>
+        {/each}
     </div>
 
-    <!-- <div class="content_container grow min-h-0" bind:this={contentContainer}/> -->
     <ContextMenu/>
 </div>
 
@@ -91,6 +88,7 @@
     display: flex;
     flex-direction: row;
     flex: 0 1 auto;
+    flex-grow: 0;
     max-height: 30px;
     background: rgb(230, 73, 125);
     user-select: none;
