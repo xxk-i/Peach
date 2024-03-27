@@ -45,5 +45,5 @@
     }
 </style>
 
-<!-- Disable right click -->
-<!-- <svelte:window on:contextmenu|preventDefault on:click={onLeftClick}/> -->
+<!-- Disable right click and enable left click capture -->
+<svelte:window on:contextmenu|preventDefault on:click={onLeftClick}/>

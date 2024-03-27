@@ -25,6 +25,9 @@ async function pop(p: string): Promise<string> {
 }
 
 function get_name(p: string): string {
+    if (p === "/") {
+        return "Root";
+    }
     return p.slice(p.lastIndexOf("/") + 1, p.length);
 }
 

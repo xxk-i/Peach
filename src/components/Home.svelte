@@ -6,6 +6,7 @@
 	import { getContext } from "svelte";
 	import { type Writable } from "svelte/store";
 	import type { TabInfo } from "$lib/stores";
+	import { os_path } from "$lib";
 
     let tabInfo: Writable<TabInfo> = getContext("tabInfo");
 
@@ -19,7 +20,7 @@
     function enterDrive(mount_point: string) {
         tabInfo.update((store) => ({
             id: store.id,
-            name: mount_point,
+            name: os_path.get_name(mount_point),
             directory: mount_point
         }));
     }

@@ -1,9 +1,19 @@
 import type { ContextMenuButton } from "./global"
 
 export type DirectoryInfo = {
+    path: string,
     folders: Array<string>,
     files: Array<string>
 }
+
+export let folderContextButtons: ContextMenuButton[] = [
+    {
+        title: "Pin Current Directory",
+        callback: () => {
+            
+        }
+    }
+];
 
 export let fileContextButtons: ContextMenuButton[] = [
     {

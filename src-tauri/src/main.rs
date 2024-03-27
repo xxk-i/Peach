@@ -24,6 +24,7 @@ struct MountedVolume {
 
 #[derive(serde::Serialize)]
 struct DirectoryInfo {
+    path: String,
     folders: Vec<String>,
     files: Vec<String>,
 }
@@ -105,7 +106,7 @@ async fn get_files_at_path(path: String) -> DirectoryInfo {
     let mut folders = Vec::new();
     let mut files = Vec::new();
 
-    let paths = fs::read_dir(PathBuf::from(path)).unwrap();
+    let paths = fs::read_dir(PathBuf::from(&path)).unwrap();
 
     for entry in paths {
         let path_type = entry.as_ref().unwrap().file_type().unwrap();
@@ -117,6 +118,7 @@ async fn get_files_at_path(path: String) -> DirectoryInfo {
     }
 
     DirectoryInfo {
+        path,
         folders,
         files
     } 

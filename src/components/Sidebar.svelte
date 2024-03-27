@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { os_path } from "$lib";
+	import { folderPins } from "$lib/global";
+	import { get_name } from "$lib/os_path";
 	import { tabStore } from "$lib/stores";
 	import { path } from "@tauri-apps/api";
 
@@ -18,7 +20,7 @@
     }
 </script>
 
-<nav>
+<nav class="select-none">
     <ul>
         <!-- <div class="flex flex-row gap-x-1 w-full"> -->
         <li>
@@ -40,7 +42,25 @@
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">apps</span>
             Apps</button>
         </li>
-        <!-- </div> -->
+        <li>
+            <div class="text-center">-- Pins --</div>
+        </li>
+        <li>
+            <button on:click={() => location.reload()}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">refresh</span>
+            Refresh</button>
+        </li>
+        {#each $folderPins as folder}
+            <li>
+                {#await os_path.get_name(folder)}
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">refresh</span>
+                {:then name}
+                    <button on:click={() => tabStore.setSelectedToDir(folder, name)}>
+                        <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder</span>
+                    {name}</button>
+                {/await}
+            </li>
+        {/each}
     </ul>
 </nav>
 

@@ -33,3 +33,7 @@ export let contextMenuInfo = writable<ContextMenuInfo>({
     isShowing: false,
 });
 // Context Menu
+
+// Sidebar
+export let folderPins = writable<string[]>([]);
+// Sidebar

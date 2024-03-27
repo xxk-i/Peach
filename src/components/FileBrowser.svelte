@@ -58,7 +58,7 @@
 
     let directoryInfoPromise: Promise<DirectoryInfo>;
     $: {
-        if (dir != "/Home/") {
+        if (dir !== "/Home/" && dir !== "/Applications/") {
             directoryInfoPromise = invoke('get_files_at_path', {path: dir});
         }
     }
