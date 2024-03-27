@@ -58,10 +58,26 @@ impl IconCache {
             let icon_family = IconFamily::read(file).unwrap();
 
             // Extract an icon from the family and save it as a PNG.
-            let image = match icon_family.get_icon_with_type(IconType::RGBA32_256x256) {
+            // A lot of these don't work on my machine (jpeg2000)
+            // so we iterate icontypes (best quality -> worst quality)
+            // until something works
+            let image = match icon_family.get_icon_with_type(IconType::RGBA32_512x512_2x) {
                 Ok(i) => i,
-                Err(e) => continue
+                Err(_) => match icon_family.get_icon_with_type(IconType::RGBA32_512x512) {
+                    Ok(i) => i,
+                    Err(_) => match icon_family.get_icon_with_type(IconType::RGBA32_256x256_2x) {
+                        Ok(i) => i,
+                        Err(_) => match icon_family.get_icon_with_type(IconType::RGBA32_256x256) {
+                            Ok(i) => i,
+                            Err(e) => {
+                                println!("Failed to convert: {}, {}", app.name, e);
+                                continue
+                            }
+                        }
+                    }
+                }
             };
+            
             let file = BufWriter::new(File::create(png_path).unwrap());
             image.write_png(file).unwrap();
 

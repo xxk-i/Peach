@@ -12,7 +12,7 @@
     setContext("tabInfo", tabInfo);
 </script>
 
-<div class="mainview {$tabInfo.id != $tabStore.selected ? "hidden" : ""}" style="width: 100%; height: 100%;">
+<div class="mainview basis-full {$tabInfo.id != $tabStore.selected ? "hidden" : ""}">
     {#if $tabInfo.directory === "/Home/"}
         <Home/>
     {:else if $tabInfo.directory === "/Applications/"}

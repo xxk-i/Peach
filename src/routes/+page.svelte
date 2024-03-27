@@ -62,16 +62,16 @@
         </div>
     </div>
 
-    <div class="flex w-full h-full">
-        <div class="shrink-0 grow-0 pr-5 pl-1 {showSideBar ? "" : "hidden"}">
+    <div class="flex flex-row overflow-auto">
+        <div class="shrink-0 grow-0 pr-5 pl-1 sticky {showSideBar ? "" : "hidden"}">
             <Sidebar/>
         </div>
 
-        <div class="grow min-h-0 overflow-auto">
-            {#each $tabStore.infos as info (get(info).id)}
-                <MainView tabInfo={info}></MainView>
-            {/each}
-        </div>
+        <!-- <div class="grow min-h-0 overflow-auto basis-full self-stretch"> -->
+        {#each $tabStore.infos as info (get(info).id)}
+            <MainView tabInfo={info}></MainView>
+        {/each}
+        <!-- </div> -->
     </div>
 
     <!-- <div class="content_container grow min-h-0" bind:this={contentContainer}/> -->
@@ -91,7 +91,7 @@
     display: flex;
     flex-direction: row;
     flex: 0 1 auto;
-    height: 30px;
+    max-height: 30px;
     background: rgb(230, 73, 125);
     user-select: none;
     border-top-left-radius: 10px;
@@ -99,7 +99,6 @@
     top: 0;
     left: 0;
     right: 0;
-    margin-top: 1;
     }
     .titlebar-button {
     display: inline-flex;
