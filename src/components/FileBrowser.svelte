@@ -8,6 +8,7 @@
     import FileListing from "./FileListing.svelte";
 	import type { TabInfo } from "$lib/stores";
     import { os_path } from "$lib";
+	import { contextMenuInfo, folderPins } from "$lib/global";
 
     let diskSpaceInfoPromise: Promise<MountedDrive>;
     let dir = "";
@@ -56,6 +57,29 @@
         }
     }
 
+    function onEmptySpaceContextMenu(event: { target: HTMLDivElement | null; }) {
+        if (event.target == null) {
+            return
+        }
+
+        const target: HTMLDivElement = event.target;
+        if (target.classList.contains("empty-space")) {
+            showEmptySpaceContextMenu();
+        }
+    }
+
+    function showEmptySpaceContextMenu() {
+        $contextMenuInfo.buttons = [
+            {
+                title: "Pin Current Directory",
+                callback: () => {
+                    $folderPins = [...$folderPins, dir];
+                }
+            }
+        ];
+        $contextMenuInfo.isShowing = true;
+    }
+
     let directoryInfoPromise: Promise<DirectoryInfo>;
     $: {
         if (dir !== "/Home/" && dir !== "/Applications/") {
@@ -67,7 +91,8 @@
 </script>
 
 <div class="size-full flex flex-col">
-    <div class="overflow-auto grow">
+    <!-- this ts error on event types is really annoying and maybe unfixable rn -->
+    <div class="empty-space overflow-auto grow pb-5" on:contextmenu={onEmptySpaceContextMenu}>
         {#await directoryInfoPromise}
             <div class="flex place-content-center size-full">
                 <Spinner color="purple" />

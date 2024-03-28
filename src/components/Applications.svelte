@@ -48,8 +48,7 @@
         {#await appsPromise}
         <Spinner/>
         {:then apps}
-            <div class="hidden">
-                {apps.sort(function (a, b) {
+            {#each apps.sort(function (a, b) {
                 if (a.name < b.name) {
                     return -1;
                 }
@@ -57,9 +56,7 @@
                     return 1;
                 }
                 return 0;
-            })}
-            </div>
-            {#each apps as app}
+            }) as app}
             <div class="flex flex-col text-center text-wrap min-w-40 py-5">
                 <button on:click={async () => await launchApp(app)} on:contextmenu={() => showApplicationContextMenu(app)}>
                     <img class="m-auto max-w-20 min-w-20 text-center" src={convertFileSrc(cacheDir + "/icons/" + app.name + ".png")} alt={app.name}/>

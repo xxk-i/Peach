@@ -3,6 +3,7 @@
 	import { contextMenuInfo, folderPins } from "$lib/global";
 	import { tabStore } from "$lib/stores";
 	import { path } from "@tauri-apps/api";
+	import { BaseDirectory, createDir, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 
     function goHome() {
         tabStore.setSelectedToHome();
@@ -16,6 +17,34 @@
 
     function goApps() {
         tabStore.setSelectedToApps();
+    }
+
+    async function loadPins() {
+        let text: string | null = null;
+        try {
+            text = await readTextFile('pins.json', { dir: BaseDirectory.AppConfig });
+        } catch(e) {
+
+        }
+        
+        if (text != null) {
+            let pinList: string[] = JSON.parse(text);
+            if (pinList != undefined) {
+                $folderPins = pinList;
+            }
+        }
+    }
+
+    async function savePins() {
+        try {
+            await createDir("", { dir: BaseDirectory.AppConfig });
+        } catch(e) {
+        }
+        await writeTextFile('pins.json', JSON.stringify($folderPins), { dir: BaseDirectory.AppConfig });
+    }
+
+    function clearPins() {
+        $folderPins = [];
     }
 
     function showPinnedFolderContextMenu(folder: string) {
@@ -58,9 +87,19 @@
             <div class="text-center">-- Pins --</div>
         </li>
         <li>
-            <button on:click={() => location.reload()}>
-                <span class="material-symbols-outlined" style="top: 5px; position: relative;">refresh</span>
-            Refresh</button>
+            <button on:click={savePins}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">save</span>
+            Save Pins</button>
+        </li>
+        <li>
+            <button on:click={loadPins}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">upload</span>
+            Load Pins</button>
+        </li>
+        <li>
+            <button on:click={clearPins}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">clear_all</span>
+            Clear Pins</button>
         </li>
         {#each $folderPins as folder}
             <li>
@@ -73,6 +112,14 @@
                 {/await}
             </li>
         {/each}
+        <li>
+            <div class="text-center">-- Other --</div>
+        </li>
+        <li>
+            <button on:click={() => location.reload()}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">refresh</span>
+            Refresh</button>
+        </li>
     </ul>
 </nav>
 
