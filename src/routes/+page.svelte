@@ -61,7 +61,7 @@
     </div>
 
     <div class="flex flex-row grow">
-        <div class="shrink-0 grow-0 pr-7 pl-1 {showSideBar ? "" : "hidden"}">
+        <div class="shrink-0 grow-0 pr-7 pl-1 h-0 min-h-full {showSideBar ? "" : "hidden"} overflow-auto">
             <Sidebar/>
         </div>
 
@@ -82,7 +82,7 @@
     .titlebar-button-container {
         display: flex;
         justify-content: flex-end;
-        min-width: min-content;
+        min-width: fit-content;
         flex-grow: 0;
         flex-shrink: 0;
     }

@@ -41,7 +41,7 @@
 </script>
 
 <!-- TODO fix all this await disaster -->
-<div class="flex justify-between flex-wrap">
+<div class="flex justify-between flex-wrap select-none">
     {#await appCacheDirPromise}
     <Spinner/>
     {:then cacheDir}

@@ -120,6 +120,10 @@
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">refresh</span>
             Refresh</button>
         </li>
+        <li>
+            <!-- intentional gap -->
+            <br/>
+        </li>
     </ul>
 </nav>
 

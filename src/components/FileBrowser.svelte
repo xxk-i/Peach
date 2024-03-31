@@ -1,14 +1,15 @@
 <script lang="ts">
+    import { os_path } from "$lib";
+	import { contextMenuInfo, folderPins } from "$lib/global";
 	import type { DirectoryInfo } from "$lib/files";
-	import type { Writable } from "svelte/store";
+	import type { TabInfo } from "$lib/stores";
 	import type { MountedDrive } from "$lib/mounted_drive";
+	import type { Writable } from "svelte/store";
     import { Progressbar, Spinner } from "flowbite-svelte";
 	import { invoke } from "@tauri-apps/api";
 	import { getContext, onDestroy } from "svelte";
     import FileListing from "./FileListing.svelte";
-	import type { TabInfo } from "$lib/stores";
-    import { os_path } from "$lib";
-	import { contextMenuInfo, folderPins } from "$lib/global";
+	import MiniSearchBar from "./MiniSearchBar.svelte";
 
     let diskSpaceInfoPromise: Promise<MountedDrive>;
     let dir = "";
@@ -82,9 +83,7 @@
 
     let directoryInfoPromise: Promise<DirectoryInfo>;
     $: {
-        if (dir !== "/Home/" && dir !== "/Applications/") {
-            directoryInfoPromise = invoke('get_files_at_path', {path: dir});
-        }
+        directoryInfoPromise = invoke('get_files_at_path', {path: dir});
     }
 
     onDestroy(unsubscribe);
@@ -98,7 +97,12 @@
                 <Spinner color="purple" />
             </div>
         {:then info}
-            <FileListing info={info} on:clickFile={openFile} on:enterDir={enterDir} on:leaveDir={leaveDir}/>
+            <div class="float-right">
+                <div class="absolute top-o right-0">
+                    <MiniSearchBar {info}/>
+                </div>
+            </div>
+            <FileListing {info} on:clickFile={openFile} on:enterDir={enterDir} on:leaveDir={leaveDir}/>
         {/await}
     </div>
     <div class="ml-1 mr-1 mb-1">
