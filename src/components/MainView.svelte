@@ -2,6 +2,7 @@
 	import FileBrowser from "./FileBrowser.svelte";
 	import Home from "./Home.svelte";
     import Applications from "./Applications.svelte";
+    import Sync from "./Sync.svelte";
 	import { setContext } from "svelte";
 	import { type Writable } from "svelte/store";
 	import { tabStore } from "$lib/stores";
@@ -19,6 +20,8 @@
         <Home/>
     {:else if $tabInfo.directory === "/Applications/"}
         <Applications/>
+    {:else if $tabInfo.directory === "/Sync/"}
+        <Sync/>
     {:else}
         <FileBrowser/>
     {/if}

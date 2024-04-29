@@ -65,6 +65,22 @@ function createTabStore() {
         });
     }
 
+    function setSelectedToSync() {
+        update((store) => {
+            for (var info of store.infos) {
+                if (get(info).id == store.selected) {
+                    info.update((info) => ({
+                        id: info.id,
+                        name: "Sync",
+                        directory: "/Sync/"
+                    }));
+                }
+            }
+
+            return store;
+        });
+    }
+
     function addTab() {
         update((store) => ({
             ...store,
@@ -123,6 +139,7 @@ function createTabStore() {
         setSelectedToDir,
         setSelectedToHome,
         setSelectedToApps,
+        setSelectedToSync,
         addTab,
         addTabAndSelectIt,
         closeTab

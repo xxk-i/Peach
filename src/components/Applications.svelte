@@ -13,6 +13,7 @@
     }
 
     let appCacheDirPromise: Promise<string> = appCacheDir();
+    // TODO catch result
     let appsPromise: Promise<InstalledApplication[]> = invoke("get_applications");
 
     async function launchApp(app: InstalledApplication) { 

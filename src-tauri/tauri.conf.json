@@ -35,6 +35,10 @@
         "sidecar": true
       }
     },
+    "systemTray": {
+      "iconPath": "icons/PeachTrayIcon.png",
+      "iconAsTemplate": false
+    },
     "macOSPrivateApi": true,
     "bundle": {
       "active": true,

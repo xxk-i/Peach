@@ -4,13 +4,14 @@
 	import type { DirectoryInfo } from "$lib/files";
 	import type { TabInfo } from "$lib/stores";
 	import type { MountedDrive } from "$lib/mounted_drive";
-	import type { Writable } from "svelte/store";
+	import { type Writable } from "svelte/store";
     import { Progressbar, Spinner } from "flowbite-svelte";
 	import { invoke } from "@tauri-apps/api";
 	import { getContext, onDestroy } from "svelte";
     import FileListing from "./FileListing.svelte";
 	import MiniSearchBar from "./MiniSearchBar.svelte";
 
+    let filter = "";
     let diskSpaceInfoPromise: Promise<MountedDrive>;
     let dir = "";
     let tabName = "";
@@ -99,10 +100,10 @@
         {:then info}
             <div class="float-right">
                 <div class="absolute top-o right-0">
-                    <MiniSearchBar {info}/>
+                    <MiniSearchBar {filter}/>
                 </div>
             </div>
-            <FileListing {info} on:clickFile={openFile} on:enterDir={enterDir} on:leaveDir={leaveDir}/>
+            <FileListing {info} {filter} on:clickFile={openFile} on:enterDir={enterDir} on:leaveDir={leaveDir}/>
         {/await}
     </div>
     <div class="ml-1 mr-1 mb-1">

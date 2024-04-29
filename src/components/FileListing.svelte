@@ -6,6 +6,7 @@
 	import { path } from "@tauri-apps/api";
 
     export let info: DirectoryInfo;
+    export let filter: string;
 
     const dispatch = createEventDispatcher();
 
@@ -54,7 +55,7 @@
     <li>
         <button class="text-left w-full" on:click={leaveDir}>..</button>
     </li>
-    {#each info.folders.sort() as folder}
+    {#each info.folders.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as folder}
         <li>
             <button class="text-left w-full" on:click={() => enterDir(folder)} on:contextmenu={() => setFolderContextMenu(folder)}>
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder
@@ -62,7 +63,7 @@
             {folder}</button>
         </li>
     {/each}
-    {#each info.files.sort() as file}
+    {#each info.files.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as file}
         <li>
             <button class="text-left" on:click={() => openFile(file)} on:contextmenu={() => setFileContextMenu(file)}>
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">

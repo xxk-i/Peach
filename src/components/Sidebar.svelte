@@ -19,6 +19,10 @@
         tabStore.setSelectedToApps();
     }
 
+    function goSync() {
+        tabStore.setSelectedToSync();
+    }
+
     async function loadPins() {
         let text: string | null = null;
         try {
@@ -82,6 +86,11 @@
             <button on:click={goApps}>
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">apps</span>
             Apps</button>
+        </li>
+        <li>
+            <button on:click={goSync}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">refresh</span>
+            Sync</button>
         </li>
         <li>
             <div class="text-center">-- Pins --</div>
