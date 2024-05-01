@@ -1,13 +1,22 @@
 <script lang="ts">
     import "../app.css"
+
     import { appWindow } from "@tauri-apps/api/window";
-    import logo from "$lib/assets/Peach.png";
-    import Tabs from "../components/Tabs.svelte";
+    import { get } from "svelte/store";
     import { mousePosition } from "$lib/global";
+    import { tabStore } from "$lib/stores";
+    import logo from "$lib/assets/Peach.png";
+	import Sidebar from "../components/Sidebar.svelte";
     import ContextMenu from "../components/ContextMenu.svelte";
+    import MainView from "../components/MainView.svelte";
+    import Tabs from "../components/Tabs.svelte";
 
-    let contentContainer: HTMLElement;
+    let showSideBar = true;
 
+    function flipShowSideBar() {
+        showSideBar = !showSideBar;
+    }
+    
     function popupAboutWindow() {
         alert("hello");
     }
@@ -21,21 +30,16 @@
 </script>
 
 <div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col" on:mousemove={handleMouseMove}>
-    <div data-tauri-drag-region class="titlebar">
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-            <div class="grow-1 shrink-0">
-                <img
-                class="ml-1 mr-3 max-h-full max-w-full"
-                src={logo}
-                alt="Peach"
-                on:click={popupAboutWindow}
-                />
-            </div>
-        <div data-tauri-drag-region class="flex gap-x-px mt-1 w-full shrink">
-            {#if contentContainer}
-                <Tabs contentContainer={contentContainer}/>
-            {/if}
+    <div data-tauri-drag-region class="titlebar flex flex-initial flex-grow-0
+    max-h-[30px] bg-[rgb(230,_73,_125)] select-none rounded-tl-[10px] rounded-tr-[10px]">
+            <img
+            class="ml-1 mr-3 max-h-full"
+            src={logo}
+            alt="Peach"
+            on:click={flipShowSideBar}
+            />
+        <div data-tauri-drag-region class="hide-scrollbar flex gap-x-px mt-1 shrink basis-full grow-0 overflow-x-auto overflow-y-hidden text-nowrap">
+            <Tabs/>
         </div>
         <div class="titlebar-button-container">
             <div class="titlebar-button" id="titlebar-minimize" on:click={appWindow.minimize}>
@@ -56,32 +60,33 @@
         </div>
     </div>
 
-    <div class="content_container grow min-h-0" bind:this={contentContainer}/>
+    <div class="flex flex-row grow">
+        <div class="shrink-0 grow-0 pr-7 pl-1 h-0 min-h-full {showSideBar ? "" : "hidden"} overflow-auto">
+            <Sidebar/>
+        </div>
+
+        {#each $tabStore.infos as info (get(info).id)}
+            <MainView tabInfo={info}></MainView>
+        {/each}
+    </div>
+
     <ContextMenu/>
 </div>
 
 <style>
+    .hide-scrollbar::-webkit-scrollbar {
+        background: transparent; /* Chrome/Safari/Webkit */
+        height: 0px;
+    }
+
     .titlebar-button-container {
         display: flex;
         justify-content: flex-end;
-        min-width: min-content;
+        min-width: fit-content;
         flex-grow: 0;
+        flex-shrink: 0;
     }
 
-    .titlebar {
-    display: flex;
-    flex-direction: row;
-    flex: 0 1 auto;
-    height: 30px;
-    background: rgb(230, 73, 125);
-    user-select: none;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin-top: 1;
-    }
     .titlebar-button {
     display: inline-flex;
     min-width: max-content;

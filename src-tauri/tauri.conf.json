@@ -11,8 +11,35 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "fs":{
+        "all": true,
+        "scope": ["**"]
+      },
+      "protocol": {
+        "all": true,
+        "asset": true,
+        "assetScope": ["**"]
+      },
+      "shell": {
+        "all": false,
+        "execute": true,
+        "open": true,
+        "scope": [
+          {
+            "name": "open-macos-app",
+            "cmd": "open",
+            "args": true
+          }
+        ],
+        "sidecar": true
+      }
     },
+    "systemTray": {
+      "iconPath": "icons/PeachTrayIcon.png",
+      "iconAsTemplate": false
+    },
+    "macOSPrivateApi": true,
     "bundle": {
       "active": true,
       "category": "DeveloperTool",

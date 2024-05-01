@@ -1,78 +1,75 @@
 <script lang="ts">
 	import type { DirectoryInfo } from "$lib/files";
-	import type { Writable } from "svelte/store";
-    import { getContext, onDestroy } from "svelte";
-    import { invoke } from "@tauri-apps/api";
-    import { tabsInfo } from "$lib/tab";
-    import { fileContextButtons } from "$lib/files";
-	import { contextMenuInfo } from "$lib/global";
+    import { fileContextButtons, folderContextButtons } from "$lib/files";
+	import { contextMenuInfo, folderPins } from "$lib/global";
+    import { createEventDispatcher } from "svelte";
+	import { path } from "@tauri-apps/api";
 
     export let info: DirectoryInfo;
+    export let filter: string;
 
-    let dir: string;
-    let ctx: Writable<string> = getContext("dir");
-    
-    const unsubscribe = ctx.subscribe((value) => { 
-        dir = value
-    });
+    const dispatch = createEventDispatcher();
 
-    function setDir(dir: string, name: string) {
-        ctx.set(dir);
-        $tabsInfo.buttonInfos = [...$tabsInfo.buttonInfos.slice(0, $tabsInfo.selected), name, ...$tabsInfo.buttonInfos.slice($tabsInfo.selected + 1, $tabsInfo.buttonInfos.length)];
+    function enterDir(dir: string) {
+        dispatch('enterDir', {
+            dir,
+        });
     }
 
-    function updateDir(dir: string, name: string) {
-        ctx.update((value) => value += dir);
-        $tabsInfo.buttonInfos = [...$tabsInfo.buttonInfos.slice(0, $tabsInfo.selected), name, ...$tabsInfo.buttonInfos.slice($tabsInfo.selected + 1, $tabsInfo.buttonInfos.length)];
-    }
-
-    function enterFolder(folder: string) {
-        updateDir("/" + folder, folder);
-    }
-
-    function leaveFolder() {
-        // If we are at root, leave to Home
-        if (dir.endsWith(":/")) {
-            setDir("/Home/", "Home");
-        } else {
-            let newDir = dir.slice(0, dir.lastIndexOf("/"));
-            let name = newDir.slice(newDir.lastIndexOf("/") + 1, newDir.length);
-            if (name != "") {
-                setDir(newDir, name);
-            } else { // dir is back at disk root
-                setDir(newDir, newDir);
-            }
-        }
+    function leaveDir() {
+        dispatch('leaveDir');
     }
 
     function openFile(path: string) {
-        invoke('open_file', {path: dir + "/" + path})
+        dispatch('clickFile', {
+            path,
+        });
     }
 
-    function setContextMenu(file: string) {
+    async function setFolderContextMenu(folder: string) {
+        let fullPath = await path.join(info.path, folder);
+        $contextMenuInfo.buttons = [
+            {
+                title: "Pin Folder",
+                callback: () => {
+                    $folderPins = [...$folderPins, fullPath];
+                }
+            },
+            {
+                title: "Pin Current Directory",
+                callback: () => {
+                    $folderPins = [...$folderPins, info.path];
+                }
+            }
+        ];
+        $contextMenuInfo.isShowing = true;
+    }
+
+    function setFileContextMenu(file: string) {
         $contextMenuInfo.buttons = fileContextButtons;
         $contextMenuInfo.isShowing = true;
     }
-    
-    onDestroy(unsubscribe);
 </script>
 
-<div class="grid grid-flow-row place-content-start w-full">
-    <button class="text-left" on:click={leaveFolder}>..</button>
-    {#each info.folders.sort() as folder}
-        <div class="flex flex-row gap-x-1 w-full">
-            <span class="material-symbols-outlined">
-            folder
-            </span>
-            <button class="text-left w-full" on:click={() => enterFolder(folder)}>{folder}</button>
-        </div>
+<ul class="select-none">
+    <li>
+        <button class="text-left w-full" on:click={leaveDir}>..</button>
+    </li>
+    {#each info.folders.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as folder}
+        <li>
+            <button class="text-left w-full" on:click={() => enterDir(folder)} on:contextmenu={() => setFolderContextMenu(folder)}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder
+                </span>
+            {folder}</button>
+        </li>
     {/each}
-    {#each info.files.sort() as file}
-        <div class="flex flex-row gap-x-1">
-            <span class="material-symbols-outlined">
-            draft
-            </span>
-            <button class="text-left" on:click={() => openFile(file)} on:contextmenu={() => setContextMenu(file)}>{file}</button>
-        </div>
+    {#each info.files.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as file}
+        <li>
+            <button class="text-left" on:click={() => openFile(file)} on:contextmenu={() => setFileContextMenu(file)}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">
+                draft
+                </span>
+            {file}</button>
+        </li>
     {/each}
-</div>
+</ul>

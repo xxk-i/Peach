@@ -1,5 +1,13 @@
 import { writable } from "svelte/store";
 
+export type MainViewInfo = {
+    id: number;
+    dir: string;
+    name: string;
+}
+
+export let globalContext = writable<MainViewInfo[]>();
+
 // Mouse
 export type MousePosition = {
     x: number,
@@ -25,3 +33,7 @@ export let contextMenuInfo = writable<ContextMenuInfo>({
     isShowing: false,
 });
 // Context Menu
+
+// Sidebar
+export let folderPins = writable<string[]>([]);
+// Sidebar
