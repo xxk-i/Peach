@@ -17,12 +17,11 @@ A WIP cross-platform file b(r)owser, in pink.
 You'll need the [Tauri prerequisites](https://tauri.app/v1/guides/getting-started/prerequisites) for your OS.
 
 This project uses `pnpm`, the `rust` toolchain, and the `tauri` cli.
-```
-npm install -g pnpm
-cargo install tauri-cli
-```
 Then just clone and
-```
+```sh
+# Install node packages
 pnpm install
+
+# Compile and run peach
 cargo tauri dev
 ```
