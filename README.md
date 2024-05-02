@@ -14,7 +14,11 @@ A WIP cross-platform file b(r)owser, in pink.
   - Undo history
 
 ## Building
-This project uses `pnpm` and the `rust` toolchain.
+This project uses `pnpm`, the `rust` toolchain, and the `tauri` cli.
+```
+npm install -g pnpm
+cargo install tauri-cli
+```
 Then just clone and
 ```
 cargo tauri dev
