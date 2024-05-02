@@ -21,5 +21,6 @@ cargo install tauri-cli
 ```
 Then just clone and
 ```
+pnpm install
 cargo tauri dev
 ```
