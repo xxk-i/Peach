@@ -6,7 +6,7 @@
 	import { setContext } from "svelte";
 	import { type Writable } from "svelte/store";
 	import { tabStore } from "$lib/stores";
-    import { type TabInfo } from "$lib/stores";
+    import { type TabInfo, SpecialDirectory } from "$lib/stores";
 
     export let tabInfo: Writable<TabInfo>;
 
@@ -16,11 +16,11 @@
 <!-- TODO fix this weird height: 0; min-height: 100%; meme (prevents growing in cross-axis direction)-->
 <!-- EDIT: probably the best way <3 css -->
 <div class="flex mainview overflow-auto grow basis-full h-0 min-h-full {$tabInfo.id != $tabStore.selected ? "hidden" : ""}">
-    {#if $tabInfo.directory === "/Home/"}
+    {#if $tabInfo.directory === SpecialDirectory.Home}
         <Home/>
-    {:else if $tabInfo.directory === "/Applications/"}
+    {:else if $tabInfo.directory === SpecialDirectory.Applications}
         <Applications/>
-    {:else if $tabInfo.directory === "/Sync/"}
+    {:else if $tabInfo.directory === SpecialDirectory.Sync}
         <Sync/>
     {:else}
         <FileBrowser/>

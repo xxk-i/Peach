@@ -1,5 +1,15 @@
 import { os_path } from "$lib";
-import { get, writable, type Writable } from "svelte/store";
+import { get, writable } from "svelte/store";
+
+/**
+ * Special views (not the file browsing view) are denoted by a
+ * recognized directory path
+ */
+export enum SpecialDirectory {
+    Home = "/Home/",
+    Applications = "/Applications",
+    Sync = "/Sync/"
+}
 
 export type TabInfo = {
     name: string,
@@ -7,6 +17,11 @@ export type TabInfo = {
     directory: string
 }
 
+/**
+ * Each Tab gets a TabInfo managed through its TabStore
+ * 
+ * @returns A collection of methods to interact with the TabInfo
+ */
 function createTabStore() {
     const { subscribe, set, update } = writable({infos: [writable({name: "Home", id: 0, directory: "/Home/"})], selected: 0, nextId: 1});
 
@@ -33,38 +48,32 @@ function createTabStore() {
         });
     }
 
+    /**
+     * Set the current tab to the special "Home" view,
+     * currently under "/Home/"
+     * 
+     */
     function setSelectedToHome() {
-        update((store) => {
-            for (var info of store.infos) {
-                if (get(info).id == store.selected) {
-                    info.update((info) => ({
-                        id: info.id,
-                        name: "Home",
-                        directory: "/Home/"
-                    }));
-                }
-            }
-
-            return store;
-        });
+        setSelectedToDir("/Home/", "Home");
     }
     
+    /**
+     * Set the current tab to the special "Applications" view,
+     * currently under "/Applications"
+     * 
+     * @remarks
+     * By using /Applications as the specialized dir, when a user
+     * manually navigates to the default Applications folder manually on macOS,
+     * this view will be shown instead
+     */
     function setSelectedToApps() {
-        update((store) => {
-            for (var info of store.infos) {
-                if (get(info).id == store.selected) {
-                    info.update((info) => ({
-                        id: info.id,
-                        name: "Apps",
-                        directory: "/Applications/"
-                    }));
-                }
-            }
-
-            return store;
-        });
+        setSelectedToDir("/Applications", "Apps");
     }
 
+    /**
+     * Set the current tab to the special "Sync" view,
+     * currently under "/Sync/"
+     */
     function setSelectedToSync() {
         update((store) => {
             for (var info of store.infos) {
@@ -81,6 +90,9 @@ function createTabStore() {
         });
     }
 
+    /**
+     * Adds a default tab without selecting it
+     */
     function addTab() {
         update((store) => ({
             ...store,
@@ -89,6 +101,9 @@ function createTabStore() {
         }));
     }
 
+    /**
+     * Adds a default tab and selects it (default of clicking the tab plus button)
+     */
     function addTabAndSelectIt() {
         update((store) => ({
             selected: store.nextId,
@@ -97,6 +112,10 @@ function createTabStore() {
         }));
     }
 
+    /**
+     * Adds a tab at the given dir without selecting it 
+     * @param dir - The directory for the tab to start in
+     */
     function addTabAtPath(dir: string) {
         update((store) => ({
             selected: store.nextId,
@@ -105,6 +124,14 @@ function createTabStore() {
         }));
     }
 
+    /**
+     * Closes a tab of the given id 
+     * @param id - The tab to be closed
+     * 
+     * @remarks
+     * closeTab will also manage reselecting another tab,
+     * should the currently selected tab be closed
+     */
     function closeTab(id: number) {
         update((store) => {
             if (store.infos.length == 0) {
