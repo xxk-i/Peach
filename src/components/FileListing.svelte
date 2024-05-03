@@ -51,27 +51,38 @@
     }
 </script>
 
-<ul class="select-none">
-    <li>
-        <button class="text-left w-full" on:click={leaveDir}>..</button>
-    </li>
-    <!-- {#each info.folders.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as folder} -->
-    {#each folders.sort() as folder}
-        <li>
-            <button class="text-left w-full" on:click={() => enterDir(folder)} on:contextmenu={() => setFolderContextMenu(folder)}>
-                <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder
-                </span>
-            {folder}</button>
-        </li>
-    {/each}
-    <!-- {#each info.files.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as file} -->
-    {#each files.sort() as file}
-        <li>
-            <button class="text-left" on:click={() => openFile(file)} on:contextmenu={() => setFileContextMenu(file)}>
-                <span class="material-symbols-outlined" style="top: 5px; position: relative;">
-                draft
-                </span>
-            {file}</button>
-        </li>
-    {/each}
-</ul>
+
+<table class="select-none">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Date Modified</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <button class="text-left w-full" on:click={leaveDir}>..</button>
+        </tr>
+        {#each folders.sort() as folder}
+            <tr>
+                <th scope="row" class="font-normal">
+                    <button class="text-left w-full" on:click={() => enterDir(folder)} on:contextmenu={() => setFolderContextMenu(folder)}>
+                        <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder
+                        </span>
+                    {folder}</button>
+                </th>
+            </tr>
+        {/each}
+        {#each files.sort() as file}
+            <tr>
+                <th scope="row" class="font-normal">
+                    <button class="text-left w-full" on:click={() => openFile(file)} on:contextmenu={() => setFileContextMenu(file)}>
+                        <span class="material-symbols-outlined" style="top: 5px; position: relative;">
+                        draft
+                        </span>
+                    {file}</button>
+                </th>
+            </tr>
+        {/each}
+    </tbody>
+</table>

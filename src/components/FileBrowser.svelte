@@ -4,7 +4,7 @@
 	import type { DirectoryInfo } from "$lib/files";
 	import { tabStore, type TabInfo } from "$lib/stores";
 	import type { MountedDrive } from "$lib/mounted_drive";
-	import { get, writable, type Writable } from "svelte/store";
+	import { writable, type Writable } from "svelte/store";
     import { Progressbar, Spinner } from "flowbite-svelte";
 	import { invoke } from "@tauri-apps/api";
 	import { getContext, onDestroy } from "svelte";
