@@ -25,7 +25,7 @@
 </script>
 
 {#if isShowing}
-    <div class="context_menu" style="left: {left + "px"}; top: {top + "px"};">
+    <div class="absolute flex flex-col rounded-lg border-[solid] border-peach-800;" style="left: {left + "px"}; top: {top + "px"};">
         {#each buttons as button}
             <button class="text-left" on:click={() => button.callback()}>{button.title}</button>
         {/each}
@@ -34,7 +34,7 @@
 
 <style>
     .context_menu {
-        background: rgb(230, 73, 125);
+        background: #e6497d;
         border: solid;
         border-color: rgb(124, 8, 47);
         position: absolute;

@@ -5,7 +5,7 @@
     export let info: Writable<TabInfo>;
 </script>
 <button
-class="hover:bg-[#e6497d] {$info.id == $tabStore.selected ? "bg-#e6497d" : "bg-red-700"} text-white font-bold py-0.5 px-4 rounded-tl-lg rounded-tr-lg min-w-40 border-l-2 border-t-2 border-r-2 border-pink-800"
+class="hover:bg-peach-500 {$info.id == $tabStore.selected ? "bg-peach-500" : "bg-peach-600"} text-white font-bold py-0.5 px-4 rounded-tl-lg rounded-tr-lg min-w-40 border-l-2 border-t-2 border-r-2 border-peach-400"
 on:click
 on:auxclick
 on:contextmenu>

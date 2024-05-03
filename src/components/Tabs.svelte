@@ -50,7 +50,7 @@
 {/each}
 
 <!-- TODO proper sticky add tab button -->
-<button class="border-t border-l border-r rounded-t" on:click={addTabAndSwitch}>
+<button class="border-t border-l border-r rounded-t bg-peach-600" on:click={addTabAndSwitch}>
     <span class="material-symbols-outlined">
     add
     </span>

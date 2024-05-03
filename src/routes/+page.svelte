@@ -29,7 +29,7 @@
     }
 </script>
 
-<div class="rounded-lg bg-[#e6497d] overflow-hidden h-screen flex flex-col" on:mousemove={handleMouseMove}>
+<div class="rounded-lg bg-peach-500 overflow-hidden h-screen flex flex-col" on:mousemove={handleMouseMove}>
     <div data-tauri-drag-region class="titlebar flex flex-initial flex-grow-0
     max-h-[30px] bg-[rgb(230,_73,_125)] select-none rounded-tl-[10px] rounded-tr-[10px]">
             <img
