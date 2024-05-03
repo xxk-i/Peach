@@ -2,16 +2,17 @@
     import { os_path } from "$lib";
 	import { contextMenuInfo, folderPins } from "$lib/global";
 	import type { DirectoryInfo } from "$lib/files";
-	import type { TabInfo } from "$lib/stores";
+	import { tabStore, type TabInfo } from "$lib/stores";
 	import type { MountedDrive } from "$lib/mounted_drive";
-	import { type Writable } from "svelte/store";
+	import { get, writable, type Writable } from "svelte/store";
     import { Progressbar, Spinner } from "flowbite-svelte";
 	import { invoke } from "@tauri-apps/api";
 	import { getContext, onDestroy } from "svelte";
     import FileListing from "./FileListing.svelte";
 	import MiniSearchBar from "./MiniSearchBar.svelte";
 
-    let filter = "";
+    // TODO maybe better way than store here?
+    let filter = writable("");
     let diskSpaceInfoPromise: Promise<MountedDrive>;
     let dir = "";
     let tabName = "";
@@ -20,10 +21,10 @@
 
     const unsubscribe = tabInfo.subscribe((info) => { 
         if (!diskSpaceInfoPromise) {
-            diskSpaceInfoPromise = invoke('get_disk_space_info', {disk: info.directory});
+            diskSpaceInfoPromise = invoke('get_disk_space_info', {disk: info.path});
         }
 
-        dir = info.directory;
+        dir = info.path;
         tabName = info.name;
     });
 
@@ -33,30 +34,20 @@
 
     async function enterDir(event: CustomEvent) {
         let newPath = await os_path.push(dir, event.detail.dir);
-        tabInfo.update((store) => ({
-            id: store.id,
-            name: event.detail.dir,
-            directory: newPath
-        }));
+        tabStore.setSelectedToPath(newPath, event.detail.dir);
+        $filter = "";
     }
 
     async function leaveDir(event: CustomEvent) {
         // If we are at root, leave to Home
         if (await os_path.pop(dir) === dir) {
-            tabInfo.update((store) => ({
-                id: store.id,
-                name: "Home",
-                directory: "/Home/"
-            }))
+            tabStore.setSelectedToHome();
         } else {
-            let newDir = await os_path.pop(dir)
-            let name = os_path.get_name(newDir);
-            tabInfo.update((store) => ({
-                id: store.id,
-                name: newDir === "/" ? newDir : name,
-                directory: newDir,
-            }))
+            let newPath = await os_path.pop(dir)
+            let name = os_path.get_name(newPath);
+            tabStore.setSelectedToPath(newPath, name);
         }
+        $filter = "";
     }
 
     function onEmptySpaceContextMenu(event: { target: HTMLDivElement | null; }) {
@@ -103,7 +94,14 @@
                     <MiniSearchBar {filter}/>
                 </div>
             </div>
-            <FileListing {info} {filter} on:clickFile={openFile} on:enterDir={enterDir} on:leaveDir={leaveDir}/>
+            <FileListing
+                directory={info.path}
+                folders={info.folders.filter((name) => name.toLowerCase().includes($filter.toLowerCase()))} 
+                files={info.files.filter((name) => name.toLowerCase().includes($filter.toLowerCase()))} 
+                on:clickFile={openFile}
+                on:enterDir={enterDir} 
+                on:leaveDir={leaveDir}
+            />
         {/await}
     </div>
     <div class="ml-1 mr-1 mb-1">

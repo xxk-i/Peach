@@ -21,7 +21,7 @@
         tabInfo.update((store) => ({
             id: store.id,
             name: os_path.get_name(mount_point),
-            directory: mount_point
+            path: mount_point
         }));
     }
 

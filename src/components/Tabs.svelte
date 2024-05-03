@@ -26,12 +26,12 @@
         }
     }
     
-    function setContextMenu(index: number) {
+    function setContextMenu(id: number) {
         $contextMenuInfo.buttons = 
         [
             {
                 title: "Close Tab",
-                callback: () => { removeTab(index) }
+                callback: () => { removeTab(id) }
             }
         ];
 
@@ -50,7 +50,7 @@
 {/each}
 
 <!-- TODO proper sticky add tab button -->
-<button class="border-t border-l border-r rounded-t bg-peach-600" on:click={addTabAndSwitch}>
+<button class="border-t border-l border-r rounded-t bg-peach-500 border-peach-400" on:click={addTabAndSwitch}>
     <span class="material-symbols-outlined">
     add
     </span>

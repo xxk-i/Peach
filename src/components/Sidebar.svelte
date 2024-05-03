@@ -12,7 +12,7 @@
     async function goUserHome() {
         let userHome = await path.join(await path.desktopDir(), ".."); // desktop parent is user $HOME lol
         let name = await os_path.get_name(userHome);
-        tabStore.setSelectedToDir(userHome, name);
+        tabStore.setSelectedToPath(userHome, name);
     }
 
     function goApps() {
@@ -115,7 +115,7 @@
                 {#await os_path.get_name(folder)}
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">refresh</span>
                 {:then name}
-                    <button on:click={() => tabStore.setSelectedToDir(folder, name)} on:contextmenu={() => showPinnedFolderContextMenu(folder)}>
+                    <button on:click={() => tabStore.setSelectedToPath(folder, name)} on:contextmenu={() => showPinnedFolderContextMenu(folder)}>
                         <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder</span>
                     {name}</button>
                 {/await}

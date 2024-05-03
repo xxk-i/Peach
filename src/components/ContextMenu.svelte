@@ -32,18 +32,5 @@
     </div>
 {/if}
 
-<style>
-    .context_menu {
-        background: #e6497d;
-        border: solid;
-        border-color: rgb(124, 8, 47);
-        position: absolute;
-        border-radius: 0.5rem;
-        /* width: 10rem; */
-        display: flex;
-        flex-direction: column;
-    }
-</style>
-
 <!-- Disable right click and enable left click capture -->
 <svelte:window on:contextmenu|preventDefault on:click={onLeftClick}/>

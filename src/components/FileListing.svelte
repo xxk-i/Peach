@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { DirectoryInfo } from "$lib/files";
     import { fileContextButtons, folderContextButtons } from "$lib/files";
 	import { contextMenuInfo, folderPins } from "$lib/global";
     import { createEventDispatcher } from "svelte";
 	import { path } from "@tauri-apps/api";
 
-    export let info: DirectoryInfo;
-    export let filter: string;
+    export let directory: string;
+    export let folders: string[];
+    export let files: string[];
 
     const dispatch = createEventDispatcher();
 
@@ -27,7 +27,7 @@
     }
 
     async function setFolderContextMenu(folder: string) {
-        let fullPath = await path.join(info.path, folder);
+        let fullPath = await path.join(directory, folder);
         $contextMenuInfo.buttons = [
             {
                 title: "Pin Folder",
@@ -38,7 +38,7 @@
             {
                 title: "Pin Current Directory",
                 callback: () => {
-                    $folderPins = [...$folderPins, info.path];
+                    $folderPins = [...$folderPins, directory];
                 }
             }
         ];
@@ -55,7 +55,8 @@
     <li>
         <button class="text-left w-full" on:click={leaveDir}>..</button>
     </li>
-    {#each info.folders.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as folder}
+    <!-- {#each info.folders.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as folder} -->
+    {#each folders.sort() as folder}
         <li>
             <button class="text-left w-full" on:click={() => enterDir(folder)} on:contextmenu={() => setFolderContextMenu(folder)}>
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder
@@ -63,7 +64,8 @@
             {folder}</button>
         </li>
     {/each}
-    {#each info.files.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as file}
+    <!-- {#each info.files.filter((name) => name.toLowerCase().includes(filter.toLowerCase())).sort() as file} -->
+    {#each files.sort() as file}
         <li>
             <button class="text-left" on:click={() => openFile(file)} on:contextmenu={() => setFileContextMenu(file)}>
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">

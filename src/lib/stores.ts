@@ -5,7 +5,7 @@ import { get, writable } from "svelte/store";
  * Special views (not the file browsing view) are denoted by a
  * recognized directory path
  */
-export enum SpecialDirectory {
+export enum SpecialPath {
     Home = "/Home/",
     Applications = "/Applications",
     Sync = "/Sync/"
@@ -14,7 +14,7 @@ export enum SpecialDirectory {
 export type TabInfo = {
     name: string,
     id: number,
-    directory: string
+    path: string
 }
 
 /**
@@ -23,7 +23,7 @@ export type TabInfo = {
  * @returns A collection of methods to interact with the TabInfo
  */
 function createTabStore() {
-    const { subscribe, set, update } = writable({infos: [writable({name: "Home", id: 0, directory: "/Home/"})], selected: 0, nextId: 1});
+    const { subscribe, set, update } = writable({infos: [writable({name: "Home", id: 0, path: "/Home/"})], selected: 0, nextId: 1});
 
     function setSelected(index: number) {
         update((store) => ({
@@ -32,14 +32,14 @@ function createTabStore() {
         }));
     }
 
-    function setSelectedToDir(dir: string, name: string) {
+    function setSelectedToPath(path: string, name: string) {
         update((store) => {
             for (var info of store.infos) {
                 if (get(info).id == store.selected) {
                     info.update((info) => ({
                         id: info.id,
                         name: name,
-                        directory: dir
+                        path
                     }));
                 }
             }
@@ -54,7 +54,7 @@ function createTabStore() {
      * 
      */
     function setSelectedToHome() {
-        setSelectedToDir("/Home/", "Home");
+        setSelectedToPath("/Home/", "Home");
     }
     
     /**
@@ -67,7 +67,7 @@ function createTabStore() {
      * this view will be shown instead
      */
     function setSelectedToApps() {
-        setSelectedToDir("/Applications", "Apps");
+        setSelectedToPath("/Applications", "Apps");
     }
 
     /**
@@ -81,7 +81,7 @@ function createTabStore() {
                     info.update((info) => ({
                         id: info.id,
                         name: "Sync",
-                        directory: "/Sync/"
+                        path: "/Sync/"
                     }));
                 }
             }
@@ -163,7 +163,7 @@ function createTabStore() {
     return {
         subscribe,
         setSelected,
-        setSelectedToDir,
+        setSelectedToPath,
         setSelectedToHome,
         setSelectedToApps,
         setSelectedToSync,
