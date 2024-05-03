@@ -56,8 +56,8 @@
 <table class="select-none w-full">
     <thead>
         <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Date Modified</th>
+            <th scope="col" class="font-normal">Name</th>
+            <th scope="col" class="font-normal">Date Modified</th>
         </tr>
     </thead>
     <tbody>
@@ -78,7 +78,7 @@
                         </span>
                     {folder}</button>
                 </th>
-                <th scope="row">
+                <th scope="row" class="font-normal">
                     1/1/1970
                 </th>
             </tr>
@@ -92,7 +92,8 @@
                         </span>
                     {file}</button>
                 </th>
-                <th scope="row">
+                <!-- TODO actual file metadata -->
+                <th scope="row" class="font-normal">
                     1/1/1970
                 </th>
             </tr>
