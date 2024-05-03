@@ -114,12 +114,12 @@ function createTabStore() {
 
     /**
      * Adds a tab at the given dir without selecting it 
-     * @param dir - The directory for the tab to start in
+     * @param path - The path for the tab to start in
      */
-    function addTabAtPath(dir: string) {
+    function addTabAtPath(path: string) {
         update((store) => ({
             selected: store.nextId,
-            infos: [...store.infos, writable({name: os_path.get_name(dir), id: store.nextId, directory: dir})],
+            infos: [...store.infos, writable({name: os_path.get_name(path), id: store.nextId, path})],
             nextId: store.nextId + 1
         }));
     }
@@ -169,6 +169,7 @@ function createTabStore() {
         setSelectedToSync,
         addTab,
         addTabAndSelectIt,
+        addTabAtPath,
         closeTab
     }
 }
