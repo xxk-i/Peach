@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
+	import { convertFileSrc, invoke } from "@tauri-apps/api/core";
     import { appCacheDir } from "@tauri-apps/api/path";
 	import { Spinner } from "flowbite-svelte";
 	import { tabStore } from "$lib/stores";
 	import { contextMenuInfo } from "$lib/global";
-	import { Command } from "@tauri-apps/api/shell";
+	import { Command } from "@tauri-apps/plugin-shell";
 
     type InstalledApplication = {
         name: string,
@@ -17,8 +17,7 @@
     let appsPromise: Promise<InstalledApplication[]> = invoke("get_applications");
 
     async function launchApp(app: InstalledApplication) { 
-        const command = new Command("open-macos-app", ["-a", app.name]);
-        await command.spawn();
+        const command = await Command.create("open-macos-app", ["-a", app.name]).execute();
     }
 
     function showApplicationContextMenu(app: InstalledApplication) {

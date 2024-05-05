@@ -1,7 +1,8 @@
-import { os, path} from "@tauri-apps/api";
+import { path } from "@tauri-apps/api";
+import { platform } from "@tauri-apps/plugin-os";
 
 async function get_root(path: string): Promise<string> {
-    if (await os.type() == "Windows_NT") {
+    if (await platform() == "windows") {
         return path.slice(0, 3);
     } else {
         return path.slice(0, 1);
@@ -9,7 +10,7 @@ async function get_root(path: string): Promise<string> {
 }
 
 async function is_root(path: string): Promise<boolean> {
-    if (await os.type() == "Windows_NT") {
+    if (await platform() == "windows") {
         return path.length == 3;
     } else {
         return path === "/";

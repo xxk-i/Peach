@@ -6,7 +6,7 @@
 	import type { MountedDrive } from "$lib/mounted_drive";
 	import { writable, type Writable } from "svelte/store";
     import { Progressbar, Spinner } from "flowbite-svelte";
-	import { invoke } from "@tauri-apps/api";
+	import { invoke } from "@tauri-apps/api/core";
 	import { getContext, onDestroy } from "svelte";
     import FileListing from "./FileListing.svelte";
 	import MiniSearchBar from "./MiniSearchBar.svelte";

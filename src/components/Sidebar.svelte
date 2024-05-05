@@ -2,8 +2,9 @@
 	import { os_path } from "$lib";
 	import { contextMenuInfo, folderPins } from "$lib/global";
 	import { tabStore } from "$lib/stores";
-	import { invoke, path } from "@tauri-apps/api";
-	import { BaseDirectory, createDir, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+	import { path } from "@tauri-apps/api";
+	import { invoke } from "@tauri-apps/api/core";
+	import { BaseDirectory, mkdir, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 
     function goHome() {
         tabStore.setSelectedToHome();
@@ -30,7 +31,7 @@
     async function loadPins() {
         let text: string | null = null;
         try {
-            text = await readTextFile('pins.json', { dir: BaseDirectory.AppConfig });
+            text = await readTextFile('pins.json', { baseDir: BaseDirectory.AppConfig });
         } catch(e) {
 
         }
@@ -45,10 +46,10 @@
 
     async function savePins() {
         try {
-            await createDir("", { dir: BaseDirectory.AppConfig });
+            await mkDir("", { dir: BaseDirectory.AppConfig });
         } catch(e) {
         }
-        await writeTextFile('pins.json', JSON.stringify($folderPins), { dir: BaseDirectory.AppConfig });
+        await writeTextFile('pins.json', JSON.stringify($folderPins), { baseDir: BaseDirectory.AppConfig });
     }
 
     function clearPins() {

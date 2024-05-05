@@ -1,7 +1,7 @@
 <script lang="ts">
     import "../app.css"
 
-    import { appWindow } from "@tauri-apps/api/window";
+    import { getCurrent } from "@tauri-apps/api/webviewWindow";
     import { get } from "svelte/store";
     import { mousePosition } from "$lib/global";
     import { tabStore } from "$lib/stores";
@@ -12,6 +12,7 @@
     import Tabs from "../components/Tabs.svelte";
 
     let showSideBar = true;
+    let window = getCurrent();
 
     function flipShowSideBar() {
         showSideBar = !showSideBar;
@@ -42,19 +43,19 @@
             <Tabs/>
         </div>
         <div class="titlebar-button-container">
-            <div class="titlebar-button" id="titlebar-minimize" on:click={appWindow.minimize}>
+            <div class="titlebar-button" id="titlebar-minimize" on:click={window.minimize}>
                 <img
                 src="https://api.iconify.design/mdi:window-minimize.svg"
                 alt="minimize"
                 />
             </div>
-            <div class="titlebar-button" id="titlebar-maximize" on:click={appWindow.toggleMaximize}>
+            <div class="titlebar-button" id="titlebar-maximize" on:click={window.toggleMaximize}>
                 <img
                 src="https://api.iconify.design/mdi:window-maximize.svg"
                 alt="maximize"
                 />
             </div>
-            <div class="titlebar-button" id="titlebar-close" on:click={appWindow.close}>
+            <div class="titlebar-button" id="titlebar-close" on:click={window.close}>
                 <img src="https://api.iconify.design/mdi:close.svg" alt="close" />
             </div>
         </div>
