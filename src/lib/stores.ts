@@ -67,7 +67,7 @@ function createTabStore() {
      * this view will be shown instead
      */
     function setSelectedToApps() {
-        setSelectedToPath("/Applications", "Apps");
+        setSelectedToPath("/Applications", "Applications");
     }
 
     /**
@@ -96,7 +96,7 @@ function createTabStore() {
     function addTab() {
         update((store) => ({
             ...store,
-            infos: [...store.infos, writable({name: "Home", id: store.nextId, directory: "/Home/"})],
+            infos: [...store.infos, writable({name: "Home", id: store.nextId, path: SpecialPath.Home})],
             nextId: store.nextId + 1,
         }));
     }
@@ -107,7 +107,7 @@ function createTabStore() {
     function addTabAndSelectIt() {
         update((store) => ({
             selected: store.nextId,
-            infos: [...store.infos, writable({name: "Home", id: store.nextId, directory: "/Home/"})],
+            infos: [...store.infos, writable({name: "Home", id: store.nextId, path: SpecialPath.Home})],
             nextId: store.nextId + 1,
         }));
     }

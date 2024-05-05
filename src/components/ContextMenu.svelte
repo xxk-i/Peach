@@ -25,7 +25,7 @@
 </script>
 
 {#if isShowing}
-    <div class="absolute flex flex-col rounded-lg border-[solid] border-peach-800;" style="left: {left + "px"}; top: {top + "px"};">
+    <div class="absolute flex flex-col rounded-lg border-solid border-peach-300 border-2 bg-peach-400 p-1" style="left: {left + "px"}; top: {top + "px"};">
         {#each buttons as button}
             <button class="text-left" on:click={() => button.callback()}>{button.title}</button>
         {/each}

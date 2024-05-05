@@ -32,7 +32,7 @@
             {
                 title: "Open Application Folder",
                 callback: () => {
-                    tabStore.setSelectedToDir(app.path, app.name);
+                    tabStore.setSelectedToPath(app.path, app.name);
                 }
             }
         ];

@@ -145,6 +145,11 @@ async fn open_file(path: String) {
     open::that(path).expect("Failed to open file");
 }
 
+#[tauri::command]
+async fn open_dev_tools(window: tauri::Window) {
+    if window.is_devtools_open() { window.close_devtools() } else { window.open_devtools() }
+}
+
 fn handle_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
     match event {
         SystemTrayEvent::MenuItemClick { tray_id, id, .. } => match id.as_str() {
@@ -204,7 +209,8 @@ fn main() {
             get_files_at_path,
             open_file,
             get_disk_space_info,
-            get_applications
+            get_applications,
+            open_dev_tools
         ])
         // Add our system tray
         .system_tray(tray)

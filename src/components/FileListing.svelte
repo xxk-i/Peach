@@ -1,13 +1,24 @@
 <script lang="ts">
     import { fileContextButtons, folderContextButtons } from "$lib/files";
 	import { contextMenuInfo, folderPins } from "$lib/global";
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
 	import { path } from "@tauri-apps/api";
+
+    enum SortType {
+        Name,
+        Date
+    }
+
+    let sortType = SortType.Name;
 
     let columns = 2;
     export let directory: string;
     export let folders: string[];
     export let files: string[];
+
+    onMount(() => {
+        sort();
+    });
 
     const dispatch = createEventDispatcher();
 
@@ -25,6 +36,21 @@
         dispatch('clickFile', {
             path,
         });
+    }
+
+    function sort() {
+        // sort() modifies in place, but we have to do assignments
+        // so we can trigger the Svelte reactivity
+        switch (sortType) {
+            case SortType.Name:
+                folders = folders.sort();
+                files = files.sort();
+                break;
+            case SortType.Date:
+                folders = folders.sort((a, b) => b.localeCompare(a));
+                files = files.sort();
+                break;
+        }
     }
 
     async function setFolderContextMenu(folder: string) {
@@ -56,8 +82,8 @@
 <table class="select-none w-full">
     <thead>
         <tr>
-            <th scope="col" class="font-normal">Name</th>
-            <th scope="col" class="font-normal">Date Modified</th>
+            <th scope="col" class="font-normal select-none cursor-pointer" on:click={() => sortType = SortType.Name}>Name</th>
+            <th scope="col" class="font-normal select-none cursor-pointer" on:click={() => sortType = SortType.Date}>Date Modified</th>
         </tr>
     </thead>
     <tbody>
@@ -70,7 +96,7 @@
                 <button class="text-left w-full" on:click={leaveDir}>..</button>
             </th>
         </tr>
-        {#each folders.sort() as folder}
+        {#each folders as folder}
             <tr class="odd:bg-peach-600">
                 <th scope="row" class="font-normal">
                     <button class="text-left w-full" on:click={() => enterDir(folder)} on:contextmenu={() => setFolderContextMenu(folder)}>
@@ -83,7 +109,7 @@
                 </th>
             </tr>
         {/each}
-        {#each files.sort() as file}
+        {#each files as file}
             <tr class="odd:bg-peach-600">
                 <th scope="row" class="font-normal">
                     <button class="text-left w-full" on:click={() => openFile(file)} on:contextmenu={() => setFileContextMenu(file)}>

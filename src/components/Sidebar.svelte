@@ -2,11 +2,15 @@
 	import { os_path } from "$lib";
 	import { contextMenuInfo, folderPins } from "$lib/global";
 	import { tabStore } from "$lib/stores";
-	import { path } from "@tauri-apps/api";
+	import { invoke, path } from "@tauri-apps/api";
 	import { BaseDirectory, createDir, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 
     function goHome() {
         tabStore.setSelectedToHome();
+    }
+
+    async function openDevTools() {
+        await invoke('open_dev_tools');
     }
 
     async function goUserHome() {
@@ -128,6 +132,11 @@
             <button on:click={() => location.reload()}>
                 <span class="material-symbols-outlined" style="top: 5px; position: relative;">refresh</span>
             Refresh</button>
+        </li>
+        <li>
+            <button on:click={async () => await openDevTools()}>
+                <span class="material-symbols-outlined" style="top: 5px; position: relative;">code</span>
+            Developer</button>
         </li>
         <li>
             <!-- intentional gap -->
