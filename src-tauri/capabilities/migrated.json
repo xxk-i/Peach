@@ -11,7 +11,9 @@
     "window:default",
     "app:default",
     "resources:default",
-    "menu:default",
+    "menu:allow-new",
+    "menu:allow-append",
+    "menu:allow-popup",
     "tray:default",
     "fs:allow-read-file",
     "fs:allow-write-file",
@@ -61,6 +63,7 @@
     "window:allow-set-ignore-cursor-events",
     "window:allow-start-dragging",
     "webview:allow-print",
+    "webview:allow-internal-toggle-devtools",
     {
       "identifier": "shell:allow-execute",
       "allow": [

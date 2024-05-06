@@ -90,7 +90,7 @@
             </div>
         {:then info}
             <div class="float-right">
-                <div class="absolute top-o right-0">
+                <div class="absolute right-1">
                     <MiniSearchBar {filter}/>
                 </div>
             </div>

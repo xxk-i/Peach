@@ -213,10 +213,13 @@ fn main() {
         .setup(|app| {
             // System tray menu
             // here `"quit".to_string()` defines the menu item id, and the second parameter is the menu item label.
-            let end_discovery = MenuItemBuilder::with_id("end_discovery", "End Discovery").build(app)?;
+            let end_discovery =
+                MenuItemBuilder::with_id("end_discovery", "End Discovery").build(app)?;
             let quit = PredefinedMenuItem::quit(app, "Quit Peach".into())?;
 
-            let menu = MenuBuilder::new(app).items(&[&end_discovery, &quit]).build()?;
+            let menu = MenuBuilder::new(app)
+                .items(&[&end_discovery, &quit])
+                .build()?;
             let tray = tauri::tray::TrayIconBuilder::with_id("peach-tray")
                 .menu(&menu)
                 .on_menu_event(handle_system_tray_event)
