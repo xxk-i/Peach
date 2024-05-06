@@ -1,12 +1,25 @@
 <script lang="ts">
     import { mousePosition, type ContextMenuButton } from "$lib/global";
     import { contextMenuInfo } from "$lib/global";
+	import { window } from "@tauri-apps/api";
+	import { Menu, Submenu } from "@tauri-apps/api/menu";
 	import { onDestroy } from "svelte";
 
     let left = 0;
     let top = 0;
     let isShowing = false;
     let buttons: ContextMenuButton[] = [];
+
+
+    async function doMenu() {
+        let menu = await Menu.new();
+        let submenu = await Submenu.new({
+            text: "Test"
+        });
+
+        menu.append(submenu);
+        menu.popup(undefined, window.getCurrent());
+    }
 
     let unsubscribe = contextMenuInfo.subscribe((value) => {
         if ($mousePosition) {
@@ -32,5 +45,6 @@
     </div>
 {/if}
 
+<!-- IMPORTANT -->
 <!-- Disable right click and enable left click capture -->
-<svelte:window on:contextmenu|preventDefault on:click={onLeftClick}/>
+<svelte:window on:contextmenu|preventDefault on:contextmenu={doMenu} on:click={onLeftClick}/>

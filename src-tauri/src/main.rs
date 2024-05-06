@@ -8,18 +8,16 @@ use sysinfo::Disks;
 
 use tauri::async_runtime::channel;
 use tauri::async_runtime::spawn;
-use tauri::async_runtime::Receiver;
 use tauri::async_runtime::Sender;
+use tauri::image::Image;
+use tauri::menu::MenuBuilder;
+use tauri::menu::MenuEvent;
+use tauri::menu::MenuItemBuilder;
+use tauri::menu::PredefinedMenuItem;
 use tauri::App;
 use tauri::AppHandle;
-use tauri::CustomMenuItem;
 use tauri::Manager;
 use tauri::RunEvent;
-use tauri::SystemTray;
-use tauri::SystemTrayEvent;
-use tauri::SystemTrayMenu;
-use tauri::SystemTrayMenuItem;
-use tauri::WindowEvent;
 
 mod discover;
 
@@ -56,7 +54,7 @@ async fn get_applications(
     if cfg!(target_os = "macos") {
         if icon_cache.is_none() {
             *icon_cache = Some(IconCache::initialize(
-                app_handle.path_resolver().app_cache_dir().unwrap(),
+                app_handle.path().app_cache_dir().unwrap(),
             ));
         }
         return Ok(icon_cache.as_ref().unwrap().apps.clone());
@@ -147,26 +145,26 @@ async fn open_file(path: String) {
 
 #[tauri::command]
 async fn open_dev_tools(window: tauri::Window) {
-    if window.is_devtools_open() { window.close_devtools() } else { window.open_devtools() }
+    println!("dev tools opening");
+    let webview_window = window.get_webview_window("main").unwrap();
+    if webview_window.is_devtools_open() {
+        webview_window.close_devtools();
+    } else {
+        webview_window.open_devtools();
+    }
 }
 
-fn handle_system_tray_event(app: &AppHandle, event: SystemTrayEvent) {
-    match event {
-        SystemTrayEvent::MenuItemClick { tray_id, id, .. } => match id.as_str() {
-            "quit" => {
-                std::process::exit(0);
-            }
-            "end_discovery" => {
-                let state: tauri::State<'_, AppState> = app.state();
-                if let Some(tx) = state.discover_tx.lock().unwrap().as_mut() {
-                    match tx.try_send("terminate") {
-                        Err(e) => println!("Failed to terminate discovery service: {e}"),
-                        _ => {}
-                    };
+fn handle_system_tray_event(app: &AppHandle, event: MenuEvent) {
+    match event.id.as_ref() {
+        "end_discovery" => {
+            let state: tauri::State<'_, AppState> = app.state();
+            if let Some(tx) = state.discover_tx.lock().unwrap().as_mut() {
+                match tx.try_send("terminate") {
+                    Err(e) => println!("Failed to terminate discovery service: {e}"),
+                    _ => {}
                 };
-            }
-            _ => {}
-        },
+            };
+        }
         _ => {}
     }
 }
@@ -179,30 +177,29 @@ fn setup(app: &App) {
 }
 
 fn main() {
-    // System tray menu
-    // here `"quit".to_string()` defines the menu item id, and the second parameter is the menu item label.
-    let end_discovery = CustomMenuItem::new("end_discovery".to_string(), "End Discovery");
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    #[rustfmt::skip]
-    let tray_menu = SystemTrayMenu::new()
-        .add_item(end_discovery)
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit);
-    let tray = SystemTray::new().with_menu(tray_menu);
-
     // Build the application
     tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_os::init())
+        .plugin(tauri_plugin_http::init())
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_process::init())
         // Default app state (empty mutexes)
         .manage(AppState {
             icon_cache: Mutex::new(None),
             discover_tx: Mutex::new(None),
         })
         // Hack from https://github.com/tauri-apps/tauri/issues/6322#issuecomment-1448141495 that makes resizing really fast
-        .on_window_event(|e| {
-            if let WindowEvent::Resized(_) = e.event() {
-                std::thread::sleep(std::time::Duration::from_nanos(1));
-            }
-        })
+        // Seems fixed on Tauri 2.0?
+        // .on_window_event(|w, e| {
+        //     if let WindowEvent::Resized(_) = e {
+        //         std::thread::sleep(std::time::Duration::from_nanos(1));
+        //     }
+        // })
         // Add our rust functions callable from the frontend
         .invoke_handler(tauri::generate_handler![
             get_drives,
@@ -213,12 +210,26 @@ fn main() {
             open_dev_tools
         ])
         // Add our system tray
-        .system_tray(tray)
         .setup(|app| {
+            // System tray menu
+            // here `"quit".to_string()` defines the menu item id, and the second parameter is the menu item label.
+            let end_discovery =
+                MenuItemBuilder::with_id("end_discovery", "End Discovery").build(app)?;
+            let quit = PredefinedMenuItem::quit(app, "Quit Peach".into())?;
+
+            let menu = MenuBuilder::new(app)
+                .items(&[&end_discovery, &quit])
+                .build()?;
+            let tray = tauri::tray::TrayIconBuilder::with_id("peach-tray")
+                .menu(&menu)
+                .on_menu_event(handle_system_tray_event)
+                // Icon is now set in here instead of tauri.conf.json
+                .icon(Image::from_path("icons/PeachTrayIcon.png")?)
+                .build(app)?;
+            app.get_webview_window("main").unwrap().open_devtools();
             setup(app);
             Ok(())
         })
-        .on_system_tray_event(handle_system_tray_event)
         // Build based on tauri_conf.json
         .build(tauri::generate_context!())
         .expect("error building tauri application")

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Spinner } from "flowbite-svelte";
-	import { invoke } from "@tauri-apps/api";
+	import { invoke } from "@tauri-apps/api/core";
     import type { MountedDrive } from "$lib/mounted_drive";
     import Drive from "../components/Drive.svelte"
 	import { getContext } from "svelte";
