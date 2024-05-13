@@ -10,6 +10,7 @@
 	import { getContext, onDestroy } from "svelte";
     import FileListing from "./FileListing.svelte";
 	import MiniSearchBar from "./MiniSearchBar.svelte";
+	import { path } from "@tauri-apps/api";
 
     // TODO maybe better way than store here?
     let filter = writable("");
@@ -18,6 +19,7 @@
     let tabName = "";
 
     let tabInfo: Writable<TabInfo> = getContext("tabInfo");
+    let fileListing: FileListing;
 
     const unsubscribe = tabInfo.subscribe((info) => { 
         if (!diskSpaceInfoPromise) {
@@ -28,8 +30,8 @@
         tabName = info.name;
     });
 
-    function openFile(event: CustomEvent) {
-        invoke('open_file', {path: dir + "/" + event.detail.path})
+    function openFile(file: string) {
+        invoke('open_file', {path: dir + "/" + file})
     }
 
     async function enterDir(event: CustomEvent) {
@@ -48,6 +50,50 @@
             tabStore.setSelectedToPath(newPath, name);
         }
         $filter = "";
+    }
+    async function setFolderContextMenu(folder: string) {
+        let fullPath = await path.join(dir, folder);
+        $contextMenuInfo.buttons = [{
+            title: "Pin Folder",
+            callback: () => {
+                $folderPins = [...$folderPins, fullPath];
+            }
+        },
+        {
+            title: "Pin Current Directory",
+            callback: () => {
+                $folderPins = [...$folderPins, dir];
+            }
+        },
+        {
+            title: "Sync Directory",
+            callback: () => {
+                tabStore.addSyncTab(fullPath);
+            }
+        }];
+        $contextMenuInfo.isShowing = true;
+    }
+
+    function setFileContextMenu(file: string) {
+        $contextMenuInfo.buttons = [{
+            title: "Open File",
+            callback: () => {
+                openFile(file)
+            }
+        },
+        {
+            title: "Open with...",
+            callback: () => {
+                console.log("Open with clicked");
+            }
+        },
+        {
+            title: "Rename",
+            callback: () => {
+                fileListing.startRename(file)
+            }
+        }];
+        $contextMenuInfo.isShowing = true;
     }
 
     function onEmptySpaceContextMenu(event: { target: HTMLDivElement | null; }) {
@@ -98,7 +144,10 @@
                 directory={info.path}
                 folders={info.folders.filter((name) => name.toLowerCase().includes($filter.toLowerCase()))} 
                 files={info.files.filter((name) => name.toLowerCase().includes($filter.toLowerCase()))} 
-                on:clickFile={openFile}
+                bind:this={fileListing}
+                on:clickFile={(event) => openFile(event.detail.file)}
+                on:altclickFile={(event) => setFileContextMenu(event.detail.file)}
+                on:altclickFolder={(event) => setFolderContextMenu(event.detail.folder)}
                 on:enterDir={enterDir} 
                 on:leaveDir={leaveDir}
             />

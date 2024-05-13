@@ -16,22 +16,27 @@ export let folderContextButtons: ContextMenuButton[] = [
 ];
 
 export let fileContextButtons: ContextMenuButton[] = [
-    {
-        title: "Open File",
-        callback: () => {
-            console.log("Open File Clicked");
-        }
-    },
-    {
-        title: "Open with...",
-        callback: () => {
-            console.log("Open with clicked");
-        }
-    },
-    {
-        title: "Rename",
-        callback: () => {
-            console.log("Rename clicked");
-        }
-    }
 ];
+
+export function createFileContextButtons(file: string): ContextMenuButton[] {
+    return [
+        {
+            title: "Open File",
+            callback: () => {
+                console.log("Open File from context menu clicked");
+            }
+        },
+        {
+            title: "Open with...",
+            callback: () => {
+                console.log("Open with clicked");
+            }
+        },
+        {
+            title: "Rename",
+            callback: () => {
+                console.log("Rename clicked");
+            }
+        }
+    ]
+}

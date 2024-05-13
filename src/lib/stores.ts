@@ -125,6 +125,15 @@ function createTabStore() {
     }
 
     /**
+     * Adds a Sync tab
+     * @param path - The path of the directory to be synced
+     */
+    function addSyncTab(path: string) {
+        let qualified_path = SpecialPath.Sync + path;
+        addTabAtPath(qualified_path);
+    }
+
+    /**
      * Closes a tab of the given id 
      * @param id - The tab to be closed
      * 
@@ -170,6 +179,7 @@ function createTabStore() {
         addTab,
         addTabAndSelectIt,
         addTabAtPath,
+        addSyncTab,
         closeTab
     }
 }

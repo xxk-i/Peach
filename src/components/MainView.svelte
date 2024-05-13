@@ -20,7 +20,7 @@
         <Home/>
     {:else if $tabInfo.path === SpecialPath.Applications}
         <Applications/>
-    {:else if $tabInfo.path === SpecialPath.Sync}
+    {:else if $tabInfo.path.startsWith(SpecialPath.Sync)}
         <Sync/>
     {:else}
         <FileBrowser/>

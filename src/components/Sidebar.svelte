@@ -46,7 +46,7 @@
 
     async function savePins() {
         try {
-            await mkDir("", { dir: BaseDirectory.AppConfig });
+            await mkdir("", { baseDir: BaseDirectory.AppConfig });
         } catch(e) {
         }
         await writeTextFile('pins.json', JSON.stringify($folderPins), { baseDir: BaseDirectory.AppConfig });

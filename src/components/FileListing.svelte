@@ -1,8 +1,5 @@
 <script lang="ts">
-    import { fileContextButtons, folderContextButtons } from "$lib/files";
-	import { contextMenuInfo, folderPins } from "$lib/global";
     import { createEventDispatcher, onMount } from "svelte";
-	import { path } from "@tauri-apps/api";
 
     enum SortType {
         Name,
@@ -10,6 +7,7 @@
     }
 
     let sortType = SortType.Name;
+    let renameFile = "";
 
     let columns = 2;
     export let directory: string;
@@ -53,28 +51,20 @@
         }
     }
 
-    async function setFolderContextMenu(folder: string) {
-        let fullPath = await path.join(directory, folder);
-        $contextMenuInfo.buttons = [
-            {
-                title: "Pin Folder",
-                callback: () => {
-                    $folderPins = [...$folderPins, fullPath];
-                }
-            },
-            {
-                title: "Pin Current Directory",
-                callback: () => {
-                    $folderPins = [...$folderPins, directory];
-                }
-            }
-        ];
-        $contextMenuInfo.isShowing = true;
+    function dispatchFileRightClick(file: string) {
+        dispatch('altclickFile', {
+            file,
+        });
     }
 
-    function setFileContextMenu(file: string) {
-        $contextMenuInfo.buttons = fileContextButtons;
-        $contextMenuInfo.isShowing = true;
+    function dispatchFolderRightClick(folder: string) {
+        dispatch('altclickFolder', {
+            folder
+        });
+    }
+
+    export function startRename(file: string) {
+        renameFile = file;
     }
 </script>
 
@@ -99,7 +89,7 @@
         {#each folders as folder}
             <tr class="odd:bg-peach-600">
                 <th scope="row" class="font-normal">
-                    <button class="text-left w-full" on:click={() => enterDir(folder)} on:contextmenu={() => setFolderContextMenu(folder)}>
+                    <button class="text-left w-full" on:click={() => enterDir(folder)} on:contextmenu={() => dispatchFolderRightClick(folder)}>
                         <span class="material-symbols-outlined" style="top: 5px; position: relative;">folder
                         </span>
                     {folder}</button>
@@ -109,14 +99,18 @@
                 </th>
             </tr>
         {/each}
-        {#each files as file}
+        {#each files as file (file)}
             <tr class="odd:bg-peach-600">
                 <th scope="row" class="font-normal">
-                    <button class="text-left w-full" on:click={() => openFile(file)} on:contextmenu={() => setFileContextMenu(file)}>
+                    {#if file === renameFile}
+                        <input class="text-left justify-left"> 
+                    {:else}
+                    <button class="text-left w-full" on:click={() => openFile(file)} on:contextmenu={() => dispatchFileRightClick(file)}>
                         <span class="material-symbols-outlined" style="top: 5px; position: relative;">
                         draft
                         </span>
                     {file}</button>
+                    {/if}
                 </th>
                 <!-- TODO actual file metadata -->
                 <th scope="row" class="font-normal">
